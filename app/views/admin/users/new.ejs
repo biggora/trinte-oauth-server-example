@@ -1,0 +1,35 @@
+<% layout('../default_layout') -%>
+
+<!-- new page -->
+<div id="content" class="container">
+    <!-- page breadcrumb -->
+    <ul class="breadcrumb">
+        <li><a href="/admin_"><i class="icon-home"></i> Home</a></li>
+        <li><a href="<%- pathTo.admin_users() %>">Users</a></li>
+        <li class="active"><a href="#"><%- title %></a></li>
+    </ul>
+    <!-- page title -->
+    <div class="page-header">
+        <h1><%- title %></h1>
+    </div>
+    <!-- form -->
+    <form method="post" action="<%- pathTo.create_admin_users() %>" class="form-horizontal" role="form">
+        <input type="hidden" name="_method" value="post"/>
+        <input type="hidden" name="_csrf" value="<%= session._csrf %>" />
+        <%- partial('form',{ locals : { user : user } }) %>
+        <div class="well">
+            <div class="col-lg-12">
+                <button class="btn btn-primary" type="submit" value="Update">
+                    <i class="icon-ok icon-white"></i>
+                    Save
+                </button>
+                <a class="btn btn-default button-cancel" href="<%- pathTo.admin_users() %>">
+                    <i class="icon-tasks"></i>
+                    Cancel
+                </a>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </form>
+</div>
+<!-- end new page -->

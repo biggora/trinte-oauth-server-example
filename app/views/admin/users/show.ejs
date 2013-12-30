@@ -1,0 +1,98 @@
+<% layout('../default_layout') -%>
+
+<!-- show page -->
+<div id="content" class="container">
+    <!-- page breadcrumb -->
+    <ul class="breadcrumb">
+        <li><a href="/admin_"><i class="icon-home"></i> Home</a></li>
+        <li><a href="<%- pathTo.admin_users() %>">Users</a></li>
+        <li class="active"><a href="#"><%- title %></a></li>
+    </ul>
+    <!-- page title -->
+    <div class="page-header">
+        <h1><%- title %></h1>
+    </div>
+    <!-- item details -->
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-bordered">
+                <tbody>
+                    
+                    <tr>
+                        <th class="span4">Active</th>
+                        <td><%- formVal(user.active) %></td>
+                    </tr>
+                    
+                    <tr>
+                        <th class="span4">Email</th>
+                        <td><%- formVal(user.email) %></td>
+                    </tr>
+                    
+                    <tr>
+                        <th class="span4">Password</th>
+                        <td><%- formVal(user.password) %></td>
+                    </tr>
+                    
+                    <tr>
+                        <th class="span4">First_name</th>
+                        <td><%- formVal(user.first_name) %></td>
+                    </tr>
+                    
+                    <tr>
+                        <th class="span4">Last_name</th>
+                        <td><%- formVal(user.last_name) %></td>
+                    </tr>
+                    
+                    <tr>
+                        <th class="span4">Gender</th>
+                        <td><%- formVal(user.gender) %></td>
+                    </tr>
+                    
+                    <tr>
+                        <th class="span4">Photo</th>
+                        <td><%- formVal(user.photo) %></td>
+                    </tr>
+                    
+                    <tr>
+                        <th class="span4">Birthday</th>
+                        <td><%- formVal(user.birthday) %></td>
+                    </tr>
+                    
+                    <tr>
+                        <th class="span4">Website</th>
+                        <td><%- formVal(user.website) %></td>
+                    </tr>
+                    
+                    <tr>
+                        <th class="span4">Provider</th>
+                        <td><%- formVal(user.provider) %></td>
+                    </tr>
+                    
+                    <tr>
+                        <th class="span4">Language</th>
+                        <td><%- formVal(user.language) %></td>
+                    </tr>
+                    
+                    <tr>
+                        <th class="span4">Account_type</th>
+                        <td><%- formVal(user.account_type) %></td>
+                    </tr>
+                    
+                    <tr>
+                        <th class="span4">Account_currency</th>
+                        <td><%- formVal(user.account_currency) %></td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+            <div class="well">
+                <a class="btn btn-default" href="<%- pathTo.edit_admin_user(user) %>"><i class="icon-edit"></i> Edit</a>
+                <a class="btn btn-danger" href="<%- pathTo.destroy_admin_user(user) %>" data-confirm="true" data-remote="true" data-method="delete" data-jsonp="(function (u) {location.href = u;})"><i class="icon-remove icon-white"></i> Delete</a>
+                <a class="btn btn-default" href="<%- pathTo.admin_users() %>" title="List Users"><i class="icon-tasks"></i> List Users</a>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+</div>
+<!-- end show page -->

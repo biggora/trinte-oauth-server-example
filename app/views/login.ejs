@@ -1,0 +1,164 @@
+<% layout( 'login_layout' ) -%>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-offset-3 col-md-offset-3 col-sm-offset-2 col-lg-6 col-sm-8 col-md-6 splash-inverse" style="margin-top:50px">
+            <h2 class="login-header centered">
+                <!-- <img src='/img/logo-inverse-lg.png'> -->
+                <span class="brand-text">Aginte OAuth2 Server</span>
+            </h2>
+            <br/>
+            <ul class="nav nav-tabs">
+                <li><a href="/"><i class="fa fa-home"></i> Home</a></li>
+                <li class="active"><a href="#signin" data-toggle="tab"><i class="fa fa-lock"></i> Sign In</a></li>
+                <li><a href="#registration" data-toggle="tab"><i class="fa fa-plus-square"></i> Registration</a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane fade in active" id="signin">
+                    <br/>
+
+                    <form id="signin" class="form" role="form" method="POST" action='/login'>
+                        <div class="form-group col-lg-12">
+                            <label for="sign_login">E-Mail:</label>
+                            <input name="sign_login" type="email" class="form-control" id="sign_login" placeholder="Enter e-mail address">
+                        </div>
+                        <div class="form-group col-lg-12">
+                            <label for="sign_password">Password:</label>
+                            <input name='sign_password' type="password" class="form-control" id="sign_password" placeholder="Enter Password">
+                        </div>
+                        <div class="clearfix"><br/></div>
+                        <div class="col-lg-12 col-sm-12" style="text-align:center">
+                            <button class="btn btn-lg btn-block btn-primary" type="submit">
+                                <i class="fa fa-lock"></i>&nbsp;&nbsp;Sign in
+                            </button>
+                            <div class="clearfix"><br/></div>
+                        </div>
+                        <input type="hidden" name="_csrf" value="<%= session._csrf %>"/>
+                    </form>
+                </div>
+                <div class="tab-pane fade" id="registration">
+                    <br/>
+
+                    <form name="form-registration" id="form-registration" class="form" role="form" method="POST" action='/registration'>
+
+                        <div class="form-group col-lg-6">
+                            <label for="first_name">First Name <span class="red">*</span>:</label>
+                            <input name="first_name" type="text" class="form-control" id="first_name" placeholder="Enter first name">
+                        </div>
+                        <div class="form-group col-lg-6">
+                            <label for="last_name">Last Name:</label>
+                            <input name="last_name" type="text" class="form-control" id="last_name" placeholder="Enter last name">
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="form-group col-lg-6">
+                            <label for="login">E-Mail <span class="red">*</span>:</label>
+                            <input name="login" type="email" class="form-control" id="login" placeholder="Enter e-mail address">
+                        </div>
+                        <div class="form-group col-lg-6">
+                            <label for="gender">Gender:</label>
+                            <select name="gender" id="gender" class="form-control">
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="form-group col-lg-6">
+                            <label for="password">Password <span class="red">*</span>:</label>
+                            <input name='password' type="password" class="form-control" id="password" placeholder="Enter Password">
+                        </div>
+                        <div class="form-group col-lg-6">
+                            <label for="password_confirm">Confirm Password <span class="red">*</span>:</label>
+                            <input name='password_confirm' type="password" class="form-control" id="password_confirm" placeholder="Re Enter Password">
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="form-group col-lg-6">
+                            <label for="account_currency">Account currency:</label>
+                            <select name="account_currency" id="account_currency" class="form-control">
+                                <option value="AUD">Australian Dollar</option>
+                                <option value="GBP">British Pound</option>
+                                <option value="CAD">Canadian Dollar</option>
+                                <option selected="selected" value="EUR">Euro</option>
+                                <option value="HKD">Hong Kong Dollar</option>
+                                <option value="NZD">New Zealand Dollar</option>
+                                <option value="SGD">Singapore Dollar</option>
+                                <option value="ZAR">South African Rand</option>
+                                <option value="CHF">Swiss Franc</option>
+                                <option value="USD">US Dollar</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-lg-6">
+                            <label for="howDidYouFindUs">How Did You Find Us:</label>
+                            <select name="howDidYouFindUs" id="howDidYouFindUs" class="form-control">
+                                <option selected="selected" value="Search Engines">Search Engines</option>
+                                <option value="Direct Mail">Received Postal Mail</option>
+                                <option value="Email Marketing">Received Email</option>
+                                <option value="Referral - Client">Friend or Colleague</option>
+                                <option value="Registered for an event">Registered for an Event</option>
+                                <option value="Sales Rep">Received Phone Call</option>
+                                <option value="Tradeshow">Trade Show</option>
+                                <option value="Other">Special Promotion</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="clearfix"><br/></div>
+                        <div class="hidden-xs col-lg-12 col-sm-12" style="text-align:center">
+                            <button class="btn btn-lg btn-block btn-primary" type="submit">
+                                <i class="fa fa-plus-square"></i>&nbsp;&nbsp;Create Account
+                            </button>
+                            <div class="clearfix"><br/></div>
+                        </div>
+                        <input type="hidden" name="_csrf" value="<%= session._csrf %>"/>
+                    </form>
+                </div>
+            </div>
+
+            <div class="clearfix"><br/></div>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 20px">
+        <footer id="footer">
+            <p style="text-align: center;font-size: 10px;color: #ccc">
+                Based on
+                <a href="http://www.trintejs.com/" target="_new" style="color: #ccc">TrinteJS</a> & Cross-db ORM
+                <a href="http://www.camintejs.com/" target="_new" style="color: #ccc">CaminteJS</a>
+            </p>
+        </footer>
+    </div>
+    <script type="text/javascript" charset="utf-8" src="/js/jquery.validate.js"></script>
+    <script>
+        $( document ).ready( function() {
+            $('form#signin').validate({
+                rules: {
+                    sign_password: {
+                        minlength: 8,
+                        required: true
+                    },
+                    sign_login: {
+                        required: true,
+                        email: true
+                    }
+                }
+            });
+
+            $('form#form-registration').validate( {
+                rules: {
+                    first_name: {
+                        minlength: 2,
+                        required: true
+                    },
+                    email: {
+                        required: true,
+                        email: true
+                    },
+                    password: {
+                        minlength: 8,
+                        required: true
+                    },
+                    password_confirm : {
+                        equalTo: "#password"
+                    }
+                }
+            } );
+        } );
+    </script>
+</div>
