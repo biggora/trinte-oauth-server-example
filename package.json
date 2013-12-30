@@ -11,10 +11,10 @@
     "dependencies": {
         "trinte": "latest",
         "caminte": "latest",
-        "express-useragent": "latest",
-        "caminte-connect": "latest",
-        "connect": "2.x",
         "express": "3.x",
+        "express-useragent": "latest",
+        "connect": "2.x",
+        "connect-caminte": "latest",
         "js-yaml": "latest",
         "ejs-locals": "1.x",
         "trinte-ejs": "latest",
