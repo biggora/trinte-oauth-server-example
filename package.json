@@ -1,18 +1,23 @@
 {
-    "name": "Oauth2Server",
-    "description": "Web-based Application",
+    "name": "trinte-restful-server-example",
+    "description": "Example RESTFul server based on TrinteJS MVC framework",
     "version": "0.0.1",
-    "author": "Alex",
+    "author": {
+        "name": "Aleksej Gordejev",
+        "email": "aleksej@gordejev.lv",
+        "url": "http://www.gordejev.lv"
+    },
     "private": true,
     "dependencies": {
         "trinte": "latest",
         "caminte": "latest",
         "express-useragent": "latest",
         "connect": ">=2.9.0",
-        "express": ">=3.0.0",
+        "express": "3.x",
         "js-yaml": "latest",
-        "ejs-locals": ">=1.0.2",
-        "trinte-ejs": ">=0.0.1",
+        "ejs-locals": "1.x",
+        "trinte-ejs": "latest",
+        "trinte-auth": "latest",
         "oauth2orize": ">=1.0.0",
         "passport": ">=0.1.17",
         "passport-local": ">=0.1.6",
@@ -23,7 +28,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git://github.com/biggora/trinte.git"
+        "url": "git://github.com/biggora/trinte-restful-server-example.git"
     },
     "main": "app.js",
     "engines": {
