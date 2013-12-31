@@ -16,21 +16,22 @@
  *  Define User Model
  *  @param {Object} schema
  **/
-module.exports = function(schema){
-    var User = schema.define('user', {
-	         active : { type: Boolean },
-	         email : { type: String },
-	         password : { type: String },
-	         first_name : { type: String },
-	         last_name : { type: String },
-	         gender : { type: String },
-	         photo : { type: String },
-	         birthday : { type: Date },
-	         website : { type: String },
-	         provider : { type: String },
-	         language : { type: String },
-	         account_type : { type: String },
-	         account_currency : { type: String }
-    });
+module.exports = function(schema) {
+    var User = schema.define( 'user', {
+        active: { type: Number, 'default': 1, index: true },
+        email: { type: String, unique: true },
+        password: { type: String },
+        first_name: { type: String, index: true },
+        last_name: { type: String, index: true },
+        gender: { type: String, 'default': 'male' },
+        photo: { type: String },
+        birthday: { type: Date },
+        website: { type: String },
+        provider: { type: String, 'default': 'password' },
+        language: { type: String, 'default': 'en' },
+        account_type: { type: String, 'default': 'user' },
+        account_currency: { type: String, 'default': 'EUR' },
+        created: { type: Date, 'default': Date.now }
+    } );
     return User;
 };

@@ -18,12 +18,12 @@
  **/
 module.exports = function(schema) {
     var Code = schema.define( 'code', {
-        authorization_code: { type: String, index: true },
+        authorization_code: { type: String, unique: true },
         client_id: { type: String, index: true },
-        user_id: { type: String },
+        user_id: { type: String, index: true },
         redirect_uri: { type: String },
         expires: { type: Number, index: true },
-        scope: { type: String },
+        scope: { type: String, 'default': '*' },
         created: { type: Date, 'default': Date.now }
     } );
     return Code;
