@@ -1,6 +1,14 @@
-### Example RESTFul server based on TrinteJS MVC framework
+### RESTFul server example
+
+A fully RESTful server implementation for TrinteJS MVC Framework
 
 #### status development
+
+#### Requirements
+
+* [NodeJS](http://nodejs.org/) v0.8+
+* [TrinteJS](https://github.com/biggora/trinte) v0.1.3+
+* [CaminteJS](https://github.com/biggora/caminte) v0.0.10+
 
 #### How to use
 
