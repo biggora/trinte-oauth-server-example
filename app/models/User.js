@@ -21,6 +21,7 @@ module.exports = function(schema) {
         active: { type: Number, 'default': 1, index: true },
         email: { type: String, unique: true },
         password: { type: String },
+        salt: { type: String },
         first_name: { type: String, index: true },
         last_name: { type: String, index: true },
         gender: { type: String, 'default': 'male' },
