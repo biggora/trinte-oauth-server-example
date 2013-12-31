@@ -4,7 +4,7 @@
 <div id="content" class="container">
     <!-- page breadcrumb -->
     <ul class="breadcrumb">
-        <li><a href="/admin_"><i class="icon-home"></i> Home</a></li>
+        <li><a href="/admin_"><i class="fa fa-home"></i> Home</a></li>
         <li><a href="<%- pathTo.admin_users() %>">Users</a></li>
         <li class="active"><a href="#"><%- title %></a></li>
     </ul>
@@ -86,9 +86,9 @@
                 </tbody>
             </table>
             <div class="well">
-                <a class="btn btn-default" href="<%- pathTo.edit_admin_user(user) %>"><i class="icon-edit"></i> Edit</a>
-                <a class="btn btn-danger" href="<%- pathTo.destroy_admin_user(user) %>" data-confirm="true" data-remote="true" data-method="delete" data-jsonp="(function (u) {location.href = u;})"><i class="icon-remove icon-white"></i> Delete</a>
-                <a class="btn btn-default" href="<%- pathTo.admin_users() %>" title="List Users"><i class="icon-tasks"></i> List Users</a>
+                <a class="btn btn-default" href="<%- pathTo.edit_admin_user(user) %>"><i class="fa fa-edit"></i> Edit</a>
+                <a class="btn btn-danger" href="<%- pathTo.destroy_admin_user(user) %>" data-confirm="true" data-remote="true" data-method="delete" data-jsonp="(function (u) {location.href = u;})"><i class="fa fa-times"></i> Delete</a>
+                <a class="btn btn-default" href="<%- pathTo.admin_users() %>" title="List Users"><i class="fa fa-tasks"></i> List Users</a>
                 <div class="clearfix"></div>
             </div>
         </div>

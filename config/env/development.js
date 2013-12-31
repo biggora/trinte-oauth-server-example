@@ -13,7 +13,6 @@ module.exports = function(app,express) {
     app.set('trust proxy', true);
     app.set('json spaces', 2);
     app.set('view cache', false);
-
     app.use(express.logger("dev"));
     app.use(express.errorHandler({
         dumpExceptions: true,
