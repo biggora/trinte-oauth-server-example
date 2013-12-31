@@ -19,43 +19,43 @@
                 <tbody>
                     
                     <tr>
-                        <th class="span4">Client_name</th>
+                        <th class="col-md-4">Client_name</th>
                         <td><%- formVal(client.client_name) %></td>
                     </tr>
                     
                     <tr>
-                        <th class="span4">Client_type</th>
+                        <th class="col-md-4">Client_type</th>
                         <td><%- formVal(client.client_type) %></td>
                     </tr>
                     
                     <tr>
-                        <th class="span4">Client_id</th>
+                        <th class="col-md-4">Client_id</th>
                         <td><%- formVal(client.client_id) %></td>
                     </tr>
                     
                     <tr>
-                        <th class="span4">Client_secret</th>
+                        <th class="col-md-4">Client_secret</th>
                         <td><%- formVal(client.client_secret) %></td>
                     </tr>
                     
                     <tr>
-                        <th class="span4">Redirect_uri</th>
+                        <th class="col-md-4">Redirect_uri</th>
                         <td><%- formVal(client.redirect_uri) %></td>
                     </tr>
                     
                     <tr>
-                        <th class="span4">Grant_types</th>
+                        <th class="col-md-4">Grant_types</th>
                         <td><%- formVal(client.grant_types) %></td>
                     </tr>
                     
                     <tr>
-                        <th class="span4">User_id</th>
+                        <th class="col-md-4">User_id</th>
                         <td><%- formVal(client.user_id) %></td>
                     </tr>
                     
                     <tr>
-                        <th class="span4">Created</th>
-                        <td><%- formVal(client.created) %></td>
+                        <th class="col-md-4">Created</th>
+                        <td><%- normalizeDate(client.created) %></td>
                     </tr>
                     
                 </tbody>

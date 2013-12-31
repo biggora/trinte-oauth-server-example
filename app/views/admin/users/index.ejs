@@ -32,8 +32,10 @@
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
-                        <th class="col-md-1 col-xs-1"><%- sortFor('_id' /* field name */,'ID' /* column title */, "Sorting column" /* tooltip message */) %></th>
-                        <th class="col-md-1">Active</th>
+                        <th class="col-md-1 col-xs-1"><%- sortFor('id' /* field name */,'ID' /* column title */, "Sorting column" /* tooltip message */) %></th>
+                        <th class="col-md-1"><%- sortFor('active','Active', "Sorting column") %></th>
+                        <th>Full Name</th>
+                        <th class="col-md-1"><%- sortFor('email','Email/Login', "Sorting column") %></th>
                         <th class="col-md-3 col-xs-3" style="text-align:center">Action</th>
                     </tr>
                 </thead>
@@ -44,7 +46,11 @@
                         <td>
                             <a href="<%- pathTo.show_admin_user(user) %>"><%- formVal(user.id) %></a>
                         </td>
-                        <td><%- formVal(user.active) %></td>
+                        <td class="centered"><%- activeIcon(user.active) %></td>
+                        <td><%- formVal(user.fullName()) %></td>
+                        <td>
+                            <a href="<%- pathTo.show_admin_user(user) %>"><%- formVal(user.email) %></a>
+                        </td>
                         <td style="text-align:right">
                             <a class="btn btn-xs btn-default" href="<%- pathTo.show_admin_user(user) %>"><i class="fa fa-tasks"></i> Detail</a>
                             <a class="btn btn-xs btn-default" href="<%- pathTo.edit_admin_user(user) %>"><i class="fa fa-edit"></i> Edit</a>
@@ -55,7 +61,7 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan='3'><%- pagerHtml %></td>
+                        <td colspan='5'><%- pagerHtml %></td>
                     </tr>
                 </tfoot>
             </table>

@@ -8,21 +8,23 @@
                 <span class="icon-bar"></span>
             </button>
             <div id="logo"></div>
-            <a href="/admin" class="navbar-brand">Aginte</a>
+            <a href="/admin" class="navbar-brand">Aginte API Server</a>
         </div>
         <nav class="collapse navbar-collapse tr-navbar-collapse" role="navigation">
             <ul class="nav navbar-nav">
-                <li><a href="/admin">Home</a></li>
-                <li><a href="/admin/users">Users</a></li>
-                <li><a href="/admin/clients">Clients</a></li>
+                <li><a href="/admin"><i class="fa fa-tachometer"></i> Dashboard</a></li>
+                <li><a href="/admin/users"><i class="fa fa-users"></i> Users</a></li>
+                <li><a href="/admin/clients"><i class="fa fa-cloud"></i> Clients</a></li>
                 <li><a href="/admin/">Credits</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="/logout"><i class="fa fa-signout"></i> Logout</a></li>
+                <li><a href="/logout"><i class="fa fa-sign-out"></i> Logout</a></li>
             </ul>
+            <!--
             <p class="navbar-text pull-right">
-                Logged in as <a href="#" class="navbar-link"><%- JSON.stringify(session) %></a>
+                Logged in as <a href="#" class="navbar-link"></a>
             </p>
+            -->
         </nav>
     </div>
 </header>

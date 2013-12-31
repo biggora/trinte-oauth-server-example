@@ -36,5 +36,31 @@ module.exports = {
         hash.update( pass.toString() + salt );
         var nPass = hash.digest( 'hex' ).toString();
         return  pass && pass !== '' ? nPass : '';
+    },
+    normalizeDate: function(date) {
+        if( typeof date === 'number' ) {
+            return new Date( date ).toISOString();
+        } else if( date.getTime ) {
+            return date.toISOString();
+        } else {
+            return new Date().toISOString();
+        }
+    },
+    getClientIp: function(req) {
+        var ipAddress;
+        // The request may be forwarded from local web server.
+        var forwardedIpsStr = req.header( 'x-forwarded-for' );
+        if( forwardedIpsStr ) {
+            // 'x-forwarded-for' header may return multiple IP addresses in
+            // the format: "client IP, proxy 1 IP, proxy 2 IP" so take the
+            // the first one
+            var forwardedIps = forwardedIpsStr.split( ',' );
+            ipAddress = forwardedIps[0];
+        }
+        if( !ipAddress ) {
+            // If request was not forwarded
+            ipAddress = req.connection.remoteAddress;
+        }
+        return ipAddress;
     }
 };

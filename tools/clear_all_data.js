@@ -12,7 +12,7 @@ var Code = require( '../app/models/Code' )( schema );
 
 // require( '../app/helpers/ModelsHelper' );
 
-console.log( '###    Clear All tables(collections)    ###' );
+console.log( '###    Clear All tables (collections)    ###' );
 console.log( '===========================================' );
 
 User.destroyAll(function(err){
@@ -39,7 +39,6 @@ User.destroyAll(function(err){
                 }  else {
                     console.log( '###    Clear Auth. codes completed! ' );
                 }
-
             });
         });
     });
