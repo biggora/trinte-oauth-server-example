@@ -8,7 +8,7 @@
 
 module.exports = {
         activeIcon: function(active){
-           return '<i class="fa fa-'+(active?'check':'times')+'"></i>';
+           return '<i class="fa fa-'+(active?'check green':'times red')+'"></i>';
         }
 };
 

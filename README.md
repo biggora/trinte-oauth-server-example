@@ -4,6 +4,10 @@ A fully RESTful server implementation for TrinteJS MVC Framework
 
 #### status development
 
+#### Features
+
+*
+
 #### Requirements
 
 * [NodeJS](http://nodejs.org/) v0.8+

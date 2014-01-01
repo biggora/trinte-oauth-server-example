@@ -137,47 +137,52 @@ server.exchange( oauth2orize.exchange.code( function(client, code, redirectURI, 
 // application issues an access token on behalf of the user who authorized the code.
 
 server.exchange( oauth2orize.exchange.password( function(client, username, password, scope, done) {
+    console.log( 'oauth2orize.exchange.password', client, username, password, scope )
 
     //Validate the client
-    Client.findById( client.clientId, function(err, localClient) {
-        if( err ) {
-            return done( err );
-        }
-        if( localClient === null ) {
-            return done( null, false );
-        }
-        if( localClient.clientSecret !== client.clientSecret ) {
-            return done( null, false );
-        }
-        //Validate the user
-        db.users.findByUsername( username, function(err, user) {
+    Client.findOne( {
+        client_id: clientId
+    } ).exec( function(err, localClient) {
             if( err ) {
                 return done( err );
             }
-            if( user === null ) {
+            if( localClient === null ) {
                 return done( null, false );
             }
-            if( password !== user.password ) {
+            if( localClient.clientSecret !== client.clientSecret ) {
                 return done( null, false );
             }
-            //Everything validated, return the token
-            var token = utils.uid( 256 );
-            var expires = new Date().getTime() + config.oauth.token_live;
-            var nToken = new Token( {
-                access_token: token,
-                client_id: client.clientId,
-                user_id: user.id,
-                expires: expires
-            } );
-
-            nToken.save( function(err) {
+            //Validate the user
+            User.findOne( {
+                email : username
+            }, function(err, user) {
                 if( err ) {
                     return done( err );
                 }
-                done( null, token );
+                if( user === null ) {
+                    return done( null, false );
+                }
+                if( !user.validPassword(password) ) {
+                    return done( null, false );
+                }
+                //Everything validated, return the token
+                var token = utils.uid( 256 );
+                var expires = new Date().getTime() + config.oauth.token_live;
+                var nToken = new Token( {
+                    access_token: token,
+                    client_id: client.clientId,
+                    user_id: user.id,
+                    expires: expires
+                } );
+
+                nToken.save( function(err) {
+                    if( err ) {
+                        return done( err );
+                    }
+                    done( null, token );
+                } );
             } );
         } );
-    } );
 } ) );
 
 // Exchange the client id and password/secret for an access token.  The callback accepts the
@@ -186,7 +191,7 @@ server.exchange( oauth2orize.exchange.password( function(client, username, passw
 // application issues an access token on behalf of the client who authorized the code.
 
 server.exchange( oauth2orize.exchange.clientCredentials( function(client, scope, done) {
-
+    console.log( 'oauth2orize.exchange.clientCredentials', client, scope )
     //Validate the client
     Client.findById( client.clientId, function(err, localClient) {
         if( err ) {
@@ -216,6 +221,53 @@ server.exchange( oauth2orize.exchange.clientCredentials( function(client, scope,
     } );
 } ) );
 
+// Exchange refreshToken for access token.
+server.exchange( oauth2orize.exchange.refreshToken( function(client, refreshToken, scope, done) {
+    console.log( 'oauth2orize.exchange.refreshToken', client, refreshToken, scope )
+    Token.findOne( { token: refreshToken }, function(err, token) {
+        if( err ) {
+            return done( err );
+        }
+        if( !token ) {
+            return done( null, false );
+        }
+        if( !token ) {
+            return done( null, false );
+        }
+
+        User.findById( token.userId, function(err, user) {
+            if( err ) {
+                return done( err );
+            }
+            if( !user ) {
+                return done( null, false );
+            }
+            /*
+             RefreshTokenModel.remove({ userId: user.userId, clientId: client.clientId }, function (err) {
+             if (err) return done(err);
+             });
+             Token.remove({ user_id: user.userId, client_id: client.clientId }, function (err) {
+             if (err) return done(err);
+             });
+
+             var tokenValue = crypto.randomBytes(32).toString('base64');
+             var refreshTokenValue = crypto.randomBytes(32).toString('base64');
+             var token = new AccessTokenModel({ token: tokenValue, clientId: client.clientId, userId: user.userId });
+             var refreshToken = new RefreshTokenModel({ token: refreshTokenValue, clientId: client.clientId, userId: user.userId });
+             refreshToken.save(function (err) {
+             if (err) { return done(err); }
+             });
+             var info = { scope: '*' }
+             token.save(function (err, token) {
+             if (err) { return done(err); }
+             done(null, tokenValue, refreshTokenValue, { 'expires_in': config.get('security:tokenLife') });
+             });
+             */
+        } );
+    } );
+} ) );
+
+
 // user authorization endpoint
 //
 // `authorization` middleware accepts a `validate` callback which is
@@ -232,19 +284,19 @@ server.exchange( oauth2orize.exchange.clientCredentials( function(client, scope,
 // authorization).  We accomplish that here by routing through `ensureLoggedIn()`
 // first, and rendering the `dialog` view.
 
-exports.authorization =
-    server.authorization( function(clientID, redirectURI, done) {
-        Client.findById( clientID, function(err, client) {
-            if( err ) {
-                return done( err );
-            }
-            // WARNING: For security purposes, it is highly advisable to check that
-            //          redirectURI provided by the client matches one registered with
-            //          the server.  For simplicity, this example does not.  You have
-            //          been warned.
-            return done( null, client, redirectURI );
-        } );
+exports.authorization = server.authorization( function(clientID, redirectURI, done) {
+    console.log( 'server.authorization', clientID, redirectURI, done )
+    Client.findById( clientID, function(err, client) {
+        if( err ) {
+            return done( err );
+        }
+        // WARNING: For security purposes, it is highly advisable to check that
+        //          redirectURI provided by the client matches one registered with
+        //          the server.  For simplicity, this example does not.  You have
+        //          been warned.
+        return done( null, client, redirectURI );
     } );
+} );
 
 // user decision endpoint
 //
@@ -264,6 +316,7 @@ exports.decision = server.decision();
 
 exports.token = [
     auth.passport.authenticate( ['basic', 'oauth2-client-password'], { session: false } ),
+    // function(req,res,next){console.log(req);next();},
     server.token(),
     server.errorHandler()
 ]

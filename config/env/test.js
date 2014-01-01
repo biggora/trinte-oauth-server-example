@@ -13,6 +13,9 @@ module.exports = function(app,express) {
     app.set('trust proxy', true);
     app.set('json spaces', 0);
     app.set('view cache', true);
+    app.set('view options', {
+        complexNames: true
+    });
     app.use(express.logger({
         format: ':method :url :status'
     }));

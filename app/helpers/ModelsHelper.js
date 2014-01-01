@@ -31,6 +31,7 @@ Client.hasMany( Token, {as: 'tokens', foreignKey: 'client_id'} );
 Client.hasMany( Code, {as: 'codes', foreignKey: 'client_id'} );
 
 Client.prototype.validSecret = function(secret) {
+    secret = (secret || '').toString().replace( /^\s+|\s+$/, '' );
     return this.client_secret === secret ? true : false;
 };
 

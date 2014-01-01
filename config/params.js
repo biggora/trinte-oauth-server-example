@@ -1,6 +1,6 @@
 /**
  *  Default params manager
- *  Inject app and express reference
+ *  Inject app reference
  *
  *  Created by init script
  *  App based on TrinteJS MVC framework

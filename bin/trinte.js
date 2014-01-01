@@ -241,11 +241,8 @@ function configureApp(trinte, callback) {
     app.set('views', root + '/app/views');
     app.engine('ejs', engine);
     app.set('view engine', 'ejs');
-    app.set('view options', {
-        complexNames: true
-    });
+
     app.use(flash());
-    app.use(express.csrf());
     app.use(function(req, res, next) {
         if (typeof req.csrfToken === "function" && req.session) {
             req.session._csrf = req.csrfToken();
@@ -258,36 +255,9 @@ function configureApp(trinte, callback) {
     middleware(app, express);
     app.use(app.router);
 
-    // Example 500 page
-    app.use(function(err, req, res, next) {
-        console.log('Internal Server Error: ' + err.message);
-        res.status(err.status || 500);
-        if (parseInt(err.status) === 403) {
-            res.render('errors/403', {
-                request: req,
-                session: req.session
-            });
-        } else if (parseInt(err.status) === 401) {
-            res.render('errors/401', {
-                request: req,
-                session: req.session
-            });
-        } else {
-            res.render('errors/500', {
-                error: err,
-                request: req,
-                session: req.session
-            });
-        }
-    });
+    // Initialize errors routes
+    require(root + '/config/errors')(app);
 
-    // Example 404 page via simple Connect middleware
-    app.use(function(req, res) {
-        res.render('errors/404', {
-            request: req,
-            session: req.session
-        });
-    });
     // Initialize routes params
     require(root + '/config/params')(app);
     callback(app);

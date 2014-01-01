@@ -27,14 +27,14 @@
 
 /* ajax input */
 input.ajax-loading {
-    background-image: url('/img/ajax-small.gif');
+    background-image: url('../img/ajax-small.gif');
     background-repeat: no-repeat;
     background-position: center right;
 }
 
 /* Sorting columns */
 a.sorter {
-    background-image: url('/img/sorting-default.png');
+    background-image: url('../img/sorting-default.png');
     background-repeat: no-repeat;
     background-position: center left;
     color: #333;
@@ -43,10 +43,10 @@ a.sorter {
 }
 
 a.sorter.headerSortUp {
-    background-image: url('/img/asc-default.png');
+    background-image: url('../img/asc-default.png');
 }
 a.sorter.headerSortDown {
-    background-image: url('/img/desc-default.png');
+    background-image: url('../img/desc-default.png');
 }
 
 /* form validation */
@@ -59,7 +59,7 @@ input.form-control.error {
 span.valid {
     width: 24px;
     height: 24px;
-    background: url(/img/valid.png) center center no-repeat;
+    background: url(../img/valid.png) center center no-repeat;
     display: inline-block;
     text-indent: -9999px;
 }
@@ -72,4 +72,8 @@ span.error {
 }
 .red {
     color: red;
+}
+
+.green {
+    color: #3c763d;
 }

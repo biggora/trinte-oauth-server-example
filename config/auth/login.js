@@ -32,25 +32,37 @@ passport.use( new LocalStrategy( {
 /*  BasicStrategy */
 passport.use( new BasicStrategy(
     function(username, password, done) {
-        Client.findOne( { client_id: username }, function(err, client) {
+        console.log('BasicStrategy Start!');
+        /*
+        User.findOne( { email: username }, function(err, user) {
             if( err ) {
                 return done( err );
             }
-            if( !client ) {
+            if( !user ) {
                 return done( null, false );
             }
-            if( client.clientSecret != password ) {
+            if( !user.validPassword(password) ) {
                 return done( null, false );
             }
-
-            return done( null, client );
+            console.log('BasicStrategy completed!');
+            user.username = user.email;
+            return done( null, user );
         } );
+        */
+        Client.findOne({ client_id: username }, function(err, client) {
+            if (err) { return done(err); }
+            if (!client) { return done(null, false); }
+            if (client.clientSecret != password) { return done(null, false); }
+            console.log('BasicStrategy completed!');
+            return done(null, client);
+        });
     }
 ) );
 
 /*  ClientPasswordStrategy */
 passport.use( new ClientPasswordStrategy(
     function(clientId, clientSecret, done) {
+        console.log('ClientPasswordStrategy Start!');
         Client.findOne( { client_id: clientId }, function(err, client) {
             if( err ) {
                 return done( err );
@@ -58,10 +70,11 @@ passport.use( new ClientPasswordStrategy(
             if( !client ) {
                 return done( null, false );
             }
-            if( client.clientSecret !== clientSecret ) {
+
+            if( !client.validSecret(clientSecret) ) {
                 return done( null, false );
             }
-
+            console.log('ClientPasswordStrategy completed! ');
             return done( null, client );
         } );
     }
@@ -117,14 +130,13 @@ auth.localAuth = function() {
         failureFlash: true,
         successFlash: 'Welcome!'
     } );
-}
+};
 
 auth.bearerAuth = function() {
     return passport.authenticate('bearer', {
         session: false
     });
-}
-
+};
 
 auth.passport = passport;
 

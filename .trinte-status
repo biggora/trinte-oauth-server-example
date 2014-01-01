@@ -1,1 +1,3 @@
 created: 2013-12-26T09:31:19.379Z
+
+curl -X POST http://localhost:3000/oauth/token --data "grant_type=password&client_id=MYKEY_37d3d808c7543dded4d588d7b18a327dcffc7687&client_secret=bTvau3C66FfSnNWHzcUZ7kxXlnwimA4x&redirect_uri=http%3A%2F%2Flocalhost%2Fcb%2F123" --user "example@server.com:horse2014"
