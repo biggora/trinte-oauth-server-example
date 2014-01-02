@@ -35,6 +35,11 @@ Client.prototype.validSecret = function(secret) {
     return this.client_secret === secret ? true : false;
 };
 
+Client.prototype.validRedirect = function(redirect_uri) {
+    redirect_uri = (redirect_uri || '').toString().replace( /^\s+|\s+$/, '' );
+    return this.redirect_uri === redirect_uri ? true : false;
+};
+
 /* Token Model */
 Token.belongsTo( User, {as: 'user', foreignKey: 'user_id'} );
 Token.belongsTo( Token, {as: 'client', foreignKey: 'client_id'} );

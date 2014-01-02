@@ -35,7 +35,7 @@ passport.use( new LocalStrategy( {
 passport.use( new BasicStrategy(
     function(client_id, client_secret, done) {
         console.log( 'BasicStrategy Start!' );
-        Client.findOne( { client_id: client_id }, function(err, client) {
+        Client.findOne( { id: client_id }, function(err, client) {
             if( err ) {
                 return done( err );
             }
@@ -56,7 +56,7 @@ passport.use( new ClientPasswordStrategy(
     function(client_id, client_secret, done) {
         console.log( 'ClientPasswordStrategy Start!' );
         Client.findOne( {
-            active : 1,
+            active: 1,
             id: client_id
         }, function(err, client) {
             if( err ) {
@@ -78,32 +78,40 @@ passport.use( new ClientPasswordStrategy(
 passport.use( new BearerStrategy(
     function(accessToken, done) {
         console.log( "BearerStrategy: ", accessToken )
-        Token.findOne( { token: accessToken }, function(err, token) {
-            if( err ) {
-                return done( err );
+        Token.findOne( {
+            access_token: accessToken,
+            expires: {
+                gte: new Date().getTime()
             }
-            if( !token ) {
-                return done( null, false );
-            }
-
-            if( Math.round( (Date.now() - token.created) / 1000 ) > config.get( 'security:tokenLife' ) ) {
-                Token.remove( { token: accessToken }, function(err) {
-                    if( err ) return done( err );
-                } );
-                return done( null, false, { message: 'Token expired' } );
-            }
-
-            User.findById( token.userId, function(err, user) {
+        }).exec( function(err, token) {
                 if( err ) {
                     return done( err );
                 }
-                if( !user ) {
-                    return done( null, false, { message: 'Unknown user' } );
+                if( !token ) {
+                    return done( null, false );
                 }
-                var info = { scope: '*' }
-                done( null, user, info );
+                if( Math.round( (Date.now() - token.created) / 1000 ) > config.get( 'security:tokenLife' ) ) {
+                    Token.remove( {
+                        where: {
+                            access_token: accessToken
+                        }
+                    }, function(err) {
+                        if( err ) return done( err );
+                    } );
+                    return done( null, false, { message: 'Token expired' } );
+                }
+
+                User.findById( token.userId, function(err, user) {
+                    if( err ) {
+                        return done( err );
+                    }
+                    if( !user ) {
+                        return done( null, false, { message: 'Unknown user' } );
+                    }
+                    var info = { scope: '*' }
+                    done( null, user, info );
+                } );
             } );
-        } );
     }
 ) );
 

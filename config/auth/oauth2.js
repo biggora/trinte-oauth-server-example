@@ -53,7 +53,7 @@ server.deserializeClient( function(id, done) {
 // values, and will be exchanged for an access token.
 
 server.grant( oauth2orize.grant.code( function(client, redirectURI, user, ares, done) {
-    console.log( 'oauth2orize.grant.code' )
+    console.log( 'Grant code' )
     var code = utils.uid( 16 );
     var expires = new Date().getTime() + config.oauth.token_live;
     var nCode = new Code( {
@@ -77,27 +77,12 @@ server.grant( oauth2orize.grant.code( function(client, redirectURI, user, ares, 
 // their response, which contains approved scope, duration, etc. as parsed by
 // the application.  The application issues a token, which is bound to these
 // values.
-/*
- server.grant( oauth2orize.grant.token( function(client, user, ares, done) {
- console.log( 'oauth2orize.grant.token' )
- var token = utils.uid( 256 );
- var expires = new Date().getTime() + config.oauth.token_live;
- var nToken = new Token( {
- access_token: token,
- client_id: client.clientId,
- user_id: user.id,
- expires: expires,
- scope: ares
- } );
 
- nToken.save( function(err) {
- if( err ) {
- return done( err );
- }
- done( null, token );
- } );
- } ) );
- */
+server.grant( oauth2orize.grant.token( function(client, user, scope, done) {
+    console.log( 'Grant token' )
+    createToken( client, scope, done );
+} ) );
+
 // Exchange authorization codes for access tokens.  The callback accepts the
 // `client`, which is exchanging `code` and any `redirectURI` from the
 // authorization request for verification.  If these values are validated, the
@@ -245,17 +230,21 @@ server.exchange( oauth2orize.exchange.refreshToken( function(client, refreshToke
 // authorization).  We accomplish that here by routing through `ensureLoggedIn()`
 // first, and rendering the `dialog` view.
 
-exports.authorization = server.authorization( function(clientID, redirectURI, done) {
-    console.log( 'server.authorization', clientID, redirectURI, done )
-    Client.findById( clientID, function(err, client) {
+exports.authorization = server.authorization( function(client_id, redirect_uri, done) {
+    console.log( 'Server Authorization', client_id, redirect_uri, done )
+    Client.findById( client_id, function(err, client) {
         if( err ) {
             return done( err );
         }
         // WARNING: For security purposes, it is highly advisable to check that
-        //          redirectURI provided by the client matches one registered with
+        //          redirect_uri provided by the client matches one registered with
         //          the server.  For simplicity, this example does not.  You have
         //          been warned.
-        return done( null, client, redirectURI );
+
+        if(!client.validRedirect(redirect_uri)) {
+            return done( { message: 'Incorrect password.' } );
+        }
+        return done( null, client, redirect_uri );
     } );
 } );
 
