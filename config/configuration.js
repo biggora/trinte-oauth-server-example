@@ -22,6 +22,7 @@ module.exports = {
     },
     oauth : {
         token_live : 3600,
+        code_live : 1200,
         clear_interval: 60
     }
 };

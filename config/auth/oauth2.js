@@ -52,23 +52,21 @@ server.deserializeClient( function(id, done) {
 // the application.  The application issues a code, which is bound to these
 // values, and will be exchanged for an access token.
 
-server.grant( oauth2orize.grant.code( function(client, redirectURI, user, ares, done) {
+server.grant( oauth2orize.grant.code( function(client, redirect_uri, user, scope, done) {
     console.log( 'Grant code' )
-    var code = utils.uid( 16 );
-    var expires = new Date().getTime() + config.oauth.token_live;
-    var nCode = new Code( {
-        authorization_code: code,
-        client_id: client.id,
-        user_id: user.id,
-        redirect_uri: redirectURI,
-        expires: expires,
-        scope: ares
-    } );
-    nCode.save( function(err) {
-        if( err ) {
-            return done( err );
-        }
-        done( null, code );
+    if( !client.validGrant( 'authorization_code' ) ) {
+        return done( { message: 'Incorrect grant_type. Allowed types: ' + client.grant_types } );
+    }
+    Code.remove( {
+        where: {
+            user_id: user.id,
+            client_id: client.id,
+            expires: {
+                lt: new Date().getTime()
+            }
+        } }, function(err) {
+        if( err ) return done( err );
+        createAuthCode( client, user, redirect_uri, scope, done );
     } );
 } ) );
 
@@ -80,6 +78,9 @@ server.grant( oauth2orize.grant.code( function(client, redirectURI, user, ares, 
 
 server.grant( oauth2orize.grant.token( function(client, user, scope, done) {
     console.log( 'Grant token' )
+    if( !client.validGrant( 'token' ) ) {
+        return done( { message: 'Incorrect grant_type. Allowed types: ' + client.grant_types } );
+    }
     createToken( client, scope, done );
 } ) );
 
@@ -89,20 +90,28 @@ server.grant( oauth2orize.grant.token( function(client, user, scope, done) {
 // application issues an access token on behalf of the user who authorized the
 // code.
 
-server.exchange( oauth2orize.exchange.code( function(client, code, redirectURI, done) {
-    console.log( 'Exchange code', client.client_id, code, redirectURI )
-    Code.findOne( { authorization_code: code }, function(err, authCode) {
-        if( err ) {
-            return done( err );
+server.exchange( oauth2orize.exchange.code( function(client, code, redirect_uri, done) {
+    console.log( 'Exchange code', client.client_id, code, redirect_uri )
+    if( !client.validGrant( 'authorization_code' ) ) {
+        return done( { message: 'Incorrect grant_type. Allowed types: ' + client.grant_types } );
+    }
+    Code.findOne( {
+        authorization_code: code,
+        expires: {
+            gte: new Date().getTime()
         }
-        if( client.id !== authCode.client_id ) {
-            return done( null, false );
-        }
-        if( redirectURI !== authCode.redirect_uri ) {
-            return done( null, false );
-        }
-        createToken( authCode, authCode.scope, done );
-    } );
+    } ).exec( function(err, authCode) {
+            if( err ) {
+                return done( err );
+            }
+            if( client.id !== authCode.client_id ) {
+                return done( { message: 'Incorrect client_id.' } );
+            }
+            if( !authCode.validRedirect( redirect_uri ) ) {
+                return done( { message: 'Incorrect redirect_uri.' } );
+            }
+            createToken( authCode, authCode.scope, done );
+        } );
 } ) );
 
 // Exchange user id and password for access tokens.  The callback accepts the
@@ -112,6 +121,9 @@ server.exchange( oauth2orize.exchange.code( function(client, code, redirectURI, 
 
 server.exchange( oauth2orize.exchange.password( function(client, username, password, scope, done) {
     console.log( 'Exchange password!' )
+    if( !client.validGrant( 'password' ) ) {
+        return done( { message: 'Incorrect grant_type. Allowed types: ' + client.grant_types } );
+    }
     //Validate the client
     Client.findOne( {
         active: 1,
@@ -121,10 +133,10 @@ server.exchange( oauth2orize.exchange.password( function(client, username, passw
                 return done( err );
             }
             if( localClient === null ) {
-                return done( null, false );
+                return done( { message: 'Client not found.' } );
             }
             if( !localClient.validSecret( client.client_secret ) ) {
-                return done( null, false );
+                return done( { message: 'Incorrect client_secret.' } );
             }
             //Validate the user
             User.findOne( {
@@ -136,10 +148,10 @@ server.exchange( oauth2orize.exchange.password( function(client, username, passw
                     return done( err );
                 }
                 if( user === null ) {
-                    return done( null, false );
+                    return done( { message: 'User not found.' } );
                 }
                 if( !user.validPassword( password ) ) {
-                    return done( null, false );
+                    return done( { message: 'Incorrect user password.' } );
                 }
                 createToken( client, scope, done );
             } );
@@ -152,7 +164,10 @@ server.exchange( oauth2orize.exchange.password( function(client, username, passw
 // application issues an access token on behalf of the client who authorized the code.
 
 server.exchange( oauth2orize.exchange.clientCredentials( function(client, scope, done) {
-    console.log( 'Exchange clientCredentials', client.client_id, scope )
+    console.log( 'Exchange clientCredentials' )
+    if( !client.validGrant( 'client_credentials' ) ) {
+        return done( { message: 'Incorrect grant_type. Allowed types: ' + client.grant_types } );
+    }
     //Validate the client
     Client.findOne( {
         active: 1,
@@ -162,10 +177,10 @@ server.exchange( oauth2orize.exchange.clientCredentials( function(client, scope,
             return done( err );
         }
         if( localClient === null ) {
-            return done( null, false );
+            return done( { message: 'Client not found.' } );
         }
         if( !localClient.validSecret( client.client_secret ) ) {
-            return done( null, false );
+            return done( { message: 'Incorrect client_secret.' } );
         }
         createToken( client, scope, done );
     } );
@@ -174,6 +189,9 @@ server.exchange( oauth2orize.exchange.clientCredentials( function(client, scope,
 // Exchange refreshToken for access token.
 server.exchange( oauth2orize.exchange.refreshToken( function(client, refreshToken, scope, done) {
     console.log( 'Exchange refreshToken' )
+    if( !client.validGrant( 'refresh_token' ) ) {
+        return done( { message: 'Incorrect grant_type. Allowed types: ' + client.grant_types } );
+    }
     Token.findOne( {
         refresh_token: refreshToken
     } ).exec( function(err, token) {
@@ -181,10 +199,7 @@ server.exchange( oauth2orize.exchange.refreshToken( function(client, refreshToke
                 return done( err );
             }
             if( !token ) {
-                return done( null, false );
-            }
-            if( !token ) {
-                return done( null, false );
+                return done( { message: 'Token not found.' } );
             }
 
             User.findById( token.user_id, function(err, user) {
@@ -192,7 +207,7 @@ server.exchange( oauth2orize.exchange.refreshToken( function(client, refreshToke
                     return done( err );
                 }
                 if( !user ) {
-                    return done( null, false );
+                    return done( { message: 'User not found.' } );
                 }
 
                 token.destroy( function(err) {
@@ -212,7 +227,6 @@ server.exchange( oauth2orize.exchange.refreshToken( function(client, refreshToke
             } );
         } );
 } ) );
-
 
 // user authorization endpoint
 //
@@ -292,7 +306,6 @@ function createToken(client, scope, done) {
         scope: scope || '*',
         expires: expires
     } );
-    //Pass in a null for user id since there is no user with this grant type
     nToken.save( function(err) {
         if( err ) {
             return done( err );
@@ -301,5 +314,25 @@ function createToken(client, scope, done) {
             expires_in: config.oauth.token_live,
             scope: nToken.scope
         } );
+    } );
+}
+
+
+function createAuthCode(client, user, redirect_uri, scope, done) {
+    var code = utils.uid( 16 );
+    var expires = new Date().getTime() + config.oauth.code_live;
+    var nCode = new Code( {
+        authorization_code: code,
+        client_id: client.id,
+        user_id: user.id || client.user_id,
+        redirect_uri: redirect_uri,
+        expires: expires,
+        scope: scope || client.scope || '*'
+    } );
+    nCode.save( function(err) {
+        if( err ) {
+            return done( err );
+        }
+        done( null, code );
     } );
 }

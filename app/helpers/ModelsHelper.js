@@ -40,6 +40,16 @@ Client.prototype.validRedirect = function(redirect_uri) {
     return this.redirect_uri === redirect_uri ? true : false;
 };
 
+Client.prototype.validScope = function(scope) {
+    scope = (scope || '').toString().replace( /^\s+|\s+$/, '' );
+    return (this.scope || '').toString().indexOf(scope) !== -1 ? true : false;
+};
+
+Client.prototype.validGrant = function(grant) {
+    grant = (grant || '').toString().replace( /^\s+|\s+$/, '' );
+    return (this.grant_types || '').toString().indexOf(grant) !== -1 ? true : false;
+};
+
 /* Token Model */
 Token.belongsTo( User, {as: 'user', foreignKey: 'user_id'} );
 Token.belongsTo( Token, {as: 'client', foreignKey: 'client_id'} );
@@ -47,3 +57,7 @@ Token.belongsTo( Token, {as: 'client', foreignKey: 'client_id'} );
 /* Code Model */
 Code.belongsTo( User, {as: 'user', foreignKey: 'user_id'} );
 Code.belongsTo( Token, {as: 'client', foreignKey: 'client_id'} );
+Code.prototype.validRedirect = function(redirect_uri) {
+    redirect_uri = (redirect_uri || '').toString().replace( /^\s+|\s+$/, '' );
+    return this.redirect_uri === redirect_uri ? true : false;
+};

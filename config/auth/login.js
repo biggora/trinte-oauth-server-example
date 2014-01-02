@@ -125,10 +125,10 @@ passport.deserializeUser( function(id, done) {
     } );
 } );
 
-auth.localAuth = function() {
+auth.localAuth = function(path) {
     return passport.authenticate( 'local', {
         successReturnToOrRedirect: '/',
-        failureRedirect: '/login',
+        failureRedirect: path || '/login',
         failureFlash: true,
         successFlash: 'Welcome!'
     } );
