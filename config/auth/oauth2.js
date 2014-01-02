@@ -231,18 +231,24 @@ server.exchange( oauth2orize.exchange.refreshToken( function(client, refreshToke
 // first, and rendering the `dialog` view.
 
 exports.authorization = server.authorization( function(client_id, redirect_uri, done) {
-    console.log( 'Server Authorization', client_id, redirect_uri, done )
+    console.log( 'Server Authorization!' )
     Client.findById( client_id, function(err, client) {
         if( err ) {
             return done( err );
         }
+        if( client === null ) {
+            return done( { message: 'Incorrect client_id.' } );
+        }
+        if( !client.validSecret( client.client_secret ) ) {
+            return done( { message: 'Incorrect client_secret.' } );
+        }
+
         // WARNING: For security purposes, it is highly advisable to check that
         //          redirect_uri provided by the client matches one registered with
         //          the server.  For simplicity, this example does not.  You have
         //          been warned.
-
-        if(!client.validRedirect(redirect_uri)) {
-            return done( { message: 'Incorrect password.' } );
+        if( !client.validRedirect( redirect_uri ) ) {
+            return done( { message: 'Incorrect redirect_uri.' } );
         }
         return done( null, client, redirect_uri );
     } );
