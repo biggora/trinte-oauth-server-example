@@ -14,7 +14,9 @@ passport.use( new LocalStrategy( {
         passwordField: 'sign_password'
     },
     function(username, password, done) {
-        User.findOne( { email: username }, function(err, user) {
+        User.findOne( {
+            username: username
+        }, function(err, user) {
             if( err ) {
                 return done( err );
             }
@@ -31,50 +33,42 @@ passport.use( new LocalStrategy( {
 
 /*  BasicStrategy */
 passport.use( new BasicStrategy(
-    function(username, password, done) {
-        console.log('BasicStrategy Start!');
-        /*
-        User.findOne( { email: username }, function(err, user) {
-            if( err ) {
-                return done( err );
-            }
-            if( !user ) {
-                return done( null, false );
-            }
-            if( !user.validPassword(password) ) {
-                return done( null, false );
-            }
-            console.log('BasicStrategy completed!');
-            user.username = user.email;
-            return done( null, user );
-        } );
-        */
-        Client.findOne({ client_id: username }, function(err, client) {
-            if (err) { return done(err); }
-            if (!client) { return done(null, false); }
-            if (client.clientSecret != password) { return done(null, false); }
-            console.log('BasicStrategy completed!');
-            return done(null, client);
-        });
-    }
-) );
-
-/*  ClientPasswordStrategy */
-passport.use( new ClientPasswordStrategy(
-    function(clientId, clientSecret, done) {
-        console.log('ClientPasswordStrategy Start!');
-        Client.findOne( { client_id: clientId }, function(err, client) {
+    function(client_id, client_secret, done) {
+        console.log( 'BasicStrategy Start!' );
+        Client.findOne( { client_id: client_id }, function(err, client) {
             if( err ) {
                 return done( err );
             }
             if( !client ) {
                 return done( null, false );
             }
-
-            if( !client.validSecret(clientSecret) ) {
+            if( !client.validSecret( client_secret ) ) {
                 return done( null, false );
             }
-            console.log('ClientPasswordStrategy completed! ');
+            console.log( 'BasicStrategy completed!' );
+            return done( null, client );
+        } );
+    }
+) );
+
+/*  ClientPasswordStrategy */
+passport.use( new ClientPasswordStrategy(
+    function(client_id, client_secret, done) {
+        console.log( 'ClientPasswordStrategy Start!' );
+        Client.findOne( {
+            active : 1,
+            id: client_id
+        }, function(err, client) {
+            if( err ) {
+                return done( err );
+            }
+            if( !client ) {
+                return done( null, false );
+            }
+            if( !client.validSecret( client_secret ) ) {
+                return done( null, false );
+            }
+            console.log( 'ClientPasswordStrategy completed! ' );
             return done( null, client );
         } );
     }
@@ -83,7 +77,7 @@ passport.use( new ClientPasswordStrategy(
 /*  BearerStrategy */
 passport.use( new BearerStrategy(
     function(accessToken, done) {
-        console.log("BearerStrategy: ", accessToken)
+        console.log( "BearerStrategy: ", accessToken )
         Token.findOne( { token: accessToken }, function(err, token) {
             if( err ) {
                 return done( err );
@@ -113,15 +107,15 @@ passport.use( new BearerStrategy(
     }
 ) );
 
-passport.serializeUser(function(user, done) {
-    done(null, user.id);
-});
+passport.serializeUser( function(user, done) {
+    done( null, user.id );
+} );
 
-passport.deserializeUser(function(id, done) {
-    User.findById(id, function (err, user) {
-        done(err, user);
-    });
-});
+passport.deserializeUser( function(id, done) {
+    User.findById( id, function(err, user) {
+        done( err, user );
+    } );
+} );
 
 auth.localAuth = function() {
     return passport.authenticate( 'local', {
@@ -133,9 +127,9 @@ auth.localAuth = function() {
 };
 
 auth.bearerAuth = function() {
-    return passport.authenticate('bearer', {
+    return passport.authenticate( 'bearer', {
         session: false
-    });
+    } );
 };
 
 auth.passport = passport;

@@ -53,6 +53,7 @@ server.deserializeClient( function(id, done) {
 // values, and will be exchanged for an access token.
 
 server.grant( oauth2orize.grant.code( function(client, redirectURI, user, ares, done) {
+    console.log( 'oauth2orize.grant.code' )
     var code = utils.uid( 16 );
     var expires = new Date().getTime() + config.oauth.token_live;
     var nCode = new Code( {
@@ -76,26 +77,27 @@ server.grant( oauth2orize.grant.code( function(client, redirectURI, user, ares, 
 // their response, which contains approved scope, duration, etc. as parsed by
 // the application.  The application issues a token, which is bound to these
 // values.
+/*
+ server.grant( oauth2orize.grant.token( function(client, user, ares, done) {
+ console.log( 'oauth2orize.grant.token' )
+ var token = utils.uid( 256 );
+ var expires = new Date().getTime() + config.oauth.token_live;
+ var nToken = new Token( {
+ access_token: token,
+ client_id: client.clientId,
+ user_id: user.id,
+ expires: expires,
+ scope: ares
+ } );
 
-server.grant( oauth2orize.grant.token( function(client, user, ares, done) {
-    var token = utils.uid( 256 );
-    var expires = new Date().getTime() + config.oauth.token_live;
-    var nToken = new Token( {
-        access_token: token,
-        client_id: client.clientId,
-        user_id: user.id,
-        expires: expires,
-        scope: ares
-    } );
-
-    nToken.save( function(err) {
-        if( err ) {
-            return done( err );
-        }
-        done( null, token );
-    } );
-} ) );
-
+ nToken.save( function(err) {
+ if( err ) {
+ return done( err );
+ }
+ done( null, token );
+ } );
+ } ) );
+ */
 // Exchange authorization codes for access tokens.  The callback accepts the
 // `client`, which is exchanging `code` and any `redirectURI` from the
 // authorization request for verification.  If these values are validated, the
@@ -103,6 +105,7 @@ server.grant( oauth2orize.grant.token( function(client, user, ares, done) {
 // code.
 
 server.exchange( oauth2orize.exchange.code( function(client, code, redirectURI, done) {
+    console.log( 'Exchange code', client.client_id, code, redirectURI )
     Code.findOne( { authorization_code: code }, function(err, authCode) {
         if( err ) {
             return done( err );
@@ -113,21 +116,7 @@ server.exchange( oauth2orize.exchange.code( function(client, code, redirectURI, 
         if( redirectURI !== authCode.redirect_uri ) {
             return done( null, false );
         }
-
-        var token = utils.uid( 256 );
-        var expires = new Date().getTime() + config.oauth.token_live;
-        var nToken = new Token( {
-            access_token: token,
-            client_id: authCode.client_id,
-            user_id: authCode.user_id,
-            expires: expires
-        } );
-        nToken.save( function(err) {
-            if( err ) {
-                return done( err );
-            }
-            done( null, token );
-        } );
+        createToken( authCode, authCode.scope, done );
     } );
 } ) );
 
@@ -137,11 +126,11 @@ server.exchange( oauth2orize.exchange.code( function(client, code, redirectURI, 
 // application issues an access token on behalf of the user who authorized the code.
 
 server.exchange( oauth2orize.exchange.password( function(client, username, password, scope, done) {
-    console.log( 'oauth2orize.exchange.password', client, username, password, scope )
-
+    console.log( 'Exchange password!' )
     //Validate the client
     Client.findOne( {
-        client_id: clientId
+        active: 1,
+        id: client.id
     } ).exec( function(err, localClient) {
             if( err ) {
                 return done( err );
@@ -149,12 +138,14 @@ server.exchange( oauth2orize.exchange.password( function(client, username, passw
             if( localClient === null ) {
                 return done( null, false );
             }
-            if( localClient.clientSecret !== client.clientSecret ) {
+            if( !localClient.validSecret( client.client_secret ) ) {
                 return done( null, false );
             }
             //Validate the user
             User.findOne( {
-                email : username
+                active: 1,
+                id: client.user_id,
+                username: username
             }, function(err, user) {
                 if( err ) {
                     return done( err );
@@ -162,25 +153,10 @@ server.exchange( oauth2orize.exchange.password( function(client, username, passw
                 if( user === null ) {
                     return done( null, false );
                 }
-                if( !user.validPassword(password) ) {
+                if( !user.validPassword( password ) ) {
                     return done( null, false );
                 }
-                //Everything validated, return the token
-                var token = utils.uid( 256 );
-                var expires = new Date().getTime() + config.oauth.token_live;
-                var nToken = new Token( {
-                    access_token: token,
-                    client_id: client.clientId,
-                    user_id: user.id,
-                    expires: expires
-                } );
-
-                nToken.save( function(err) {
-                    if( err ) {
-                        return done( err );
-                    }
-                    done( null, token );
-                } );
+                createToken( client, scope, done );
             } );
         } );
 } ) );
@@ -191,80 +167,65 @@ server.exchange( oauth2orize.exchange.password( function(client, username, passw
 // application issues an access token on behalf of the client who authorized the code.
 
 server.exchange( oauth2orize.exchange.clientCredentials( function(client, scope, done) {
-    console.log( 'oauth2orize.exchange.clientCredentials', client, scope )
+    console.log( 'Exchange clientCredentials', client.client_id, scope )
     //Validate the client
-    Client.findById( client.clientId, function(err, localClient) {
+    Client.findOne( {
+        active: 1,
+        id: client.client_id
+    }, function(err, localClient) {
         if( err ) {
             return done( err );
         }
         if( localClient === null ) {
             return done( null, false );
         }
-        if( localClient.clientSecret !== client.clientSecret ) {
+        if( !localClient.validSecret( client.client_secret ) ) {
             return done( null, false );
         }
-        var token = utils.uid( 256 );
-        var expires = new Date().getTime() + config.oauth.token_live;
-        var nToken = new Token( {
-            access_token: token,
-            client_id: client.clientId,
-            user_id: user.id,
-            expires: expires
-        } );
-        //Pass in a null for user id since there is no user with this grant type
-        nToken.save( function(err) {
-            if( err ) {
-                return done( err );
-            }
-            done( null, token );
-        } );
+        createToken( client, scope, done );
     } );
 } ) );
 
 // Exchange refreshToken for access token.
 server.exchange( oauth2orize.exchange.refreshToken( function(client, refreshToken, scope, done) {
-    console.log( 'oauth2orize.exchange.refreshToken', client, refreshToken, scope )
-    Token.findOne( { token: refreshToken }, function(err, token) {
-        if( err ) {
-            return done( err );
-        }
-        if( !token ) {
-            return done( null, false );
-        }
-        if( !token ) {
-            return done( null, false );
-        }
-
-        User.findById( token.userId, function(err, user) {
+    console.log( 'Exchange refreshToken' )
+    Token.findOne( {
+        refresh_token: refreshToken
+    } ).exec( function(err, token) {
             if( err ) {
                 return done( err );
             }
-            if( !user ) {
+            if( !token ) {
                 return done( null, false );
             }
-            /*
-             RefreshTokenModel.remove({ userId: user.userId, clientId: client.clientId }, function (err) {
-             if (err) return done(err);
-             });
-             Token.remove({ user_id: user.userId, client_id: client.clientId }, function (err) {
-             if (err) return done(err);
-             });
+            if( !token ) {
+                return done( null, false );
+            }
 
-             var tokenValue = crypto.randomBytes(32).toString('base64');
-             var refreshTokenValue = crypto.randomBytes(32).toString('base64');
-             var token = new AccessTokenModel({ token: tokenValue, clientId: client.clientId, userId: user.userId });
-             var refreshToken = new RefreshTokenModel({ token: refreshTokenValue, clientId: client.clientId, userId: user.userId });
-             refreshToken.save(function (err) {
-             if (err) { return done(err); }
-             });
-             var info = { scope: '*' }
-             token.save(function (err, token) {
-             if (err) { return done(err); }
-             done(null, tokenValue, refreshTokenValue, { 'expires_in': config.get('security:tokenLife') });
-             });
-             */
+            User.findById( token.user_id, function(err, user) {
+                if( err ) {
+                    return done( err );
+                }
+                if( !user ) {
+                    return done( null, false );
+                }
+
+                token.destroy( function(err) {
+                    if( err ) return done( err );
+                    Token.remove( {
+                        where: {
+                            user_id: user.id,
+                            client_id: client.id,
+                            expires: {
+                                lt: new Date().getTime()
+                            }
+                        } }, function(err) {
+                        if( err ) return done( err );
+                        createToken( client, scope || client.scope, done );
+                    } );
+                } );
+            } );
         } );
-    } );
 } ) );
 
 
@@ -316,7 +277,34 @@ exports.decision = server.decision();
 
 exports.token = [
     auth.passport.authenticate( ['basic', 'oauth2-client-password'], { session: false } ),
-    // function(req,res,next){console.log(req);next();},
+    // function(req,res,next){console.log(req.body);next();},
     server.token(),
-    server.errorHandler()
+    server.errorHandler(),
+    function(req, res, next) {
+        req.send( req.body );
+    }
 ]
+
+function createToken(client, scope, done) {
+    var aToken = utils.uid( 48 ).toString( 'base64' );
+    var rToken = utils.uid( 24 ).toString( 'base64' );
+    var expires = new Date().getTime() + config.oauth.token_live;
+    var nToken = new Token( {
+        access_token: aToken,
+        refresh_token: rToken,
+        client_id: client.id,
+        user_id: client.user_id,
+        scope: scope || '*',
+        expires: expires
+    } );
+    //Pass in a null for user id since there is no user with this grant type
+    nToken.save( function(err) {
+        if( err ) {
+            return done( err );
+        }
+        done( null, aToken, rToken, {
+            expires_in: config.oauth.token_live,
+            scope: nToken.scope
+        } );
+    } );
+}

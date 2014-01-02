@@ -19,7 +19,7 @@
 module.exports = function(schema) {
     var User = schema.define( 'user', {
         active: { type: Number, 'default': 1, index: true },
-        email: { type: String, unique: true },
+        username: { type: String, unique: true },
         password: { type: String },
         salt: { type: String },
         first_name: { type: String, index: true },

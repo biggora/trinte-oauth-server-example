@@ -10,21 +10,37 @@
  **/
 
 module.exports = function(app) {
+    var resErr = {
+        error: {
+            status: 404,
+            message: "Not Found.",
+            type: "AginteException",
+            code: 1
+        }
+    };
+
     // 401, 403, 500  error page
     app.use( function(err, req, res, next) {
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Cache-Control', 'no-store');
+        res.setHeader('Pragma', 'no-cache');
         res.status( err.status || 500 );
-        if( parseInt( err.status ) === 403 ) {
-            res.send( err.status + ' ' + err.message );
-        } else if( parseInt( err.status ) === 401 ) {
-            res.send( err.status + ' ' + err.message );
-        } else {
+        if( parseInt( err.status ) === 500 ) {
             console.log( 'Internal Server Error: ' + err.message );
-            res.send( err.status + ' ' + err.message );
+            resErr.error.code = 2;
+        } else {
+            resErr.error.code = 3;
         }
+        resErr.error.status = err.status;
+        resErr.error.message = err.message;
+        res.send( resErr );
     } );
 
     // 404 error page
     app.use( function(req, res) {
-        res.send( '404 Not found' );
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Cache-Control', 'no-store');
+        res.setHeader('Pragma', 'no-cache');
+        res.send( resErr );
     } );
 };

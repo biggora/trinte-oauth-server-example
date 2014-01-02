@@ -15,7 +15,7 @@ var cleanPass = 'horse2014';
 
 var dUser = {
     active: 1,
-    email: 'example@server.com',
+    username: 'example@server.com',
     salt: salt,
     password: Helper.createPasswordHash( cleanPass, salt ),
     first_name: 'Alexey',
@@ -31,7 +31,6 @@ var dClient = {
     active: 1,
     client_name: 'First App',
     client_type: 'website',
-    client_id: Helper.createKey( salt, 'MYKEY_' ),
     client_secret: Helper.uid( 32 ),
     redirect_uri: 'http://localhost:3000/',
     grant_types: '',
@@ -43,13 +42,13 @@ console.log( '===================================' );
 
 /* Create User */
 User.findOrCreate( {
-    email: dUser.email
+    username: dUser.username
 }, dUser, function(err, user) {
     if( user && !err ) {
-        console.log( '###     User     ###' );
-        console.log( '          id: ' + user.id );
-        console.log( '       login: ' + user.email );
-        console.log( '    password: ' + cleanPass );
+        console.log( '           User +++' );
+        console.log( '             id: ' + user.id );
+        console.log( '       username: ' + user.username );
+        console.log( '       password: ' + cleanPass );
         console.log( '===================================' );
 
         /* set user id */
@@ -57,12 +56,12 @@ User.findOrCreate( {
 
         /* Create Client */
         Client.findOrCreate( {
-            client_id: dClient.client_id
+            client_name: dClient.client_name
         }, dClient, function(err, client) {
             if( client && !err ) {
-                console.log( '###   Client     ###' );
-                console.log( '          ID: ' + client.client_id );
-                console.log( '      SECRET: ' + client.client_secret );
+                console.log( '     New Client +++' );
+                console.log( '      client_id: ' + client.id );
+                console.log( '  client_secret: ' + client.client_secret );
                 console.log( '===================================' );
             } else {
                 console.log( 'Create Client ERROR: ', err );

@@ -18,7 +18,8 @@
  **/
 module.exports = function(schema) {
     var Token = schema.define( 'token', {
-        access_token: { type: String, index: true },
+        access_token: { type: String, unique: true },
+        refresh_token: { type: String, unique: true },
         client_id: { type: String, index: true },
         user_id: { type: String, index: true },
         expires: { type: Number, index: true },

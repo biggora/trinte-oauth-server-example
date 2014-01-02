@@ -21,7 +21,6 @@ module.exports = function(schema) {
         active: { type: Number, 'default': 1, index: true },
         client_name: { type: String, unique: true },
         client_type: { type: String, 'default': 'website' },
-        client_id: { type: String, index: true },
         client_secret: { type: String },
         redirect_uri: { type: String },
         grant_types: { type: String },
