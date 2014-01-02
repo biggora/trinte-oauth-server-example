@@ -94,13 +94,11 @@ module.exports = {
      * @param next
      */
     'dialog': function(req, res, next) {
-
         res.render( 'dialog', {
             transactionID: req.oauth2.transactionID,
-            user: req.user,
+            user: req.oauth2.user,
             client: req.oauth2.client,
             controllers: []
         } );
-
     }
 };

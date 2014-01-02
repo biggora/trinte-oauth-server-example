@@ -22,6 +22,7 @@ module.exports = function(schema) {
         client_name: { type: String, unique: true },
         client_type: { type: String, 'default': 'web application' },
         client_secret: { type: String },
+        client_image: {type: String, 'default': '/img/app-default.png'},
         redirect_uri: { type: String },
         grant_types: { type: String },
         user_id: { type: String, index: true },

@@ -20,7 +20,7 @@ module.exports = function routes(map) {
     // app.post('/oauth/token', oauth2.token);
     map.root( "apps#index" );
     // [auth.isLoggedIn( '/login' ),  ]
-    map.get( '/authorize', 'apps#dialog', oauth2.authorization );
+    map.get( '/authorize', 'apps#dialog', [auth.isLoggedIn( '/login' ), oauth2.authorization] );
     map.post( '/dialog/authorize/decision', oauth2.decision, auth.isLoggedIn( '/login' ) );
     map.post( '/oauth/token', oauth2.token );
     map.all( '/logout', auth.logOut( "/" ) );

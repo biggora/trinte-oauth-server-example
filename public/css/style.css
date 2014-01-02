@@ -45,6 +45,7 @@ a.sorter {
 a.sorter.headerSortUp {
     background-image: url('../img/asc-default.png');
 }
+
 a.sorter.headerSortDown {
     background-image: url('../img/desc-default.png');
 }
@@ -53,9 +54,11 @@ a.sorter.headerSortDown {
 input.form-control.valid {
     border: 1px solid #468847;
 }
+
 input.form-control.error {
     border: 1px solid red;
 }
+
 span.valid {
     width: 24px;
     height: 24px;
@@ -70,10 +73,26 @@ span.error {
     padding: 2px 8px;
     margin-top: 2px;
 }
+
 .red {
     color: red;
 }
 
 .green {
     color: #3c763d;
+}
+
+.dialog-container {
+    border: 1px solid #E5E5E5;
+}
+
+.dialog-container .modal-header {
+    background-color: #428BCA;
+    color: #ffffff;
+}
+.dialog-container .modal-footer {
+    background-color: #F9F9F9;
+}
+.dialog-container .modal-footer .footer-info {
+    margin-top: 5px;
 }
