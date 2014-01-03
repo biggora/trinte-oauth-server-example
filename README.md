@@ -6,7 +6,9 @@ A fully RESTful server implementation for TrinteJS MVC Framework
 
 #### Features
 
-*
+* Multi database support: Redis, MongoDB, MySQL, SQLite, PostgreSQL, TingoDB
+* Access control via OAuth 2.0
+* Cluster mode
 
 #### Requirements
 

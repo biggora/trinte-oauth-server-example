@@ -24,6 +24,15 @@ module.exports = {
      **/
     'index': function(req, res, next) {
         var format = req.param( 'format' ) || 'json';
+        var user = {};
+        if(req.user){
+            var rUser = req.user.toJSON();
+             for(var i in rUser) {
+                 if(i !== 'password' && i !== 'salt' && i !== 'provider') {
+                       user[i] = rUser[i];
+                 }
+             }
+        }
         switch(format.toString()) {
             case 'text':
             case 'html':
@@ -33,7 +42,7 @@ module.exports = {
                 res.send( 'XML' );
                 break;
             default:
-                res.send( 'JSON' );
+                res.send( user );
         }
      }
 

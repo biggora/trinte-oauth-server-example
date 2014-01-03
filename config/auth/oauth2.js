@@ -108,7 +108,7 @@ server.exchange( oauth2orize.exchange.code( function(client, code, redirect_uri,
                 return done( err );
             }
             if( !authCode ) {
-                return done( { message: 'Authorization code not found.' } );
+                return done( { message: 'Unknown Authorization code.' } );
             }
             if( client.id !== authCode.id ) {
                 return done( { message: 'Incorrect client_id.' } );
@@ -134,29 +134,32 @@ server.exchange( oauth2orize.exchange.password( function(client, username, passw
     }
     //Validate the client
     Client.findOne( {
-        active: 1,
         id: client.id
     } ).exec( function(err, localClient) {
             if( err ) {
                 return done( err );
             }
             if( localClient === null ) {
-                return done( { message: 'Client not found.' } );
+                return done( { message: 'Unknown Client.' } );
+            }
+            if( localClient.active !==  1) {
+                return done( { message: 'Client disabled.' } );
             }
             if( !localClient.validSecret( client.client_secret ) ) {
                 return done( { message: 'Incorrect client_secret.' } );
             }
             //Validate the user
             User.findOne( {
-                active: 1,
-                id: client.user_id,
                 username: username
             }, function(err, user) {
                 if( err ) {
                     return done( err );
                 }
                 if( user === null ) {
-                    return done( { message: 'User not found.' } );
+                    return done( { message: 'Unknown User.' } );
+                }
+                if( user.active !== 1 ) {
+                    return done( { message: 'User disabled.' } );
                 }
                 if( !user.validPassword( password ) ) {
                     return done( { message: 'Incorrect user password.' } );
@@ -178,14 +181,16 @@ server.exchange( oauth2orize.exchange.clientCredentials( function(client, scope,
     }
     //Validate the client
     Client.findOne( {
-        active: 1,
         id: client.client_id
     }, function(err, localClient) {
         if( err ) {
             return done( err );
         }
         if( localClient === null ) {
-            return done( { message: 'Client not found.' } );
+            return done( { message: 'Unknown Client.' } );
+        }
+        if( localClient.active !==  1) {
+            return done( { message: 'Client disabled.' } );
         }
         if( !localClient.validSecret( client.client_secret ) ) {
             return done( { message: 'Incorrect client_secret.' } );
@@ -258,7 +263,10 @@ exports.authorization = server.authorization( function(client_id, redirect_uri, 
             return done( err );
         }
         if( client === null ) {
-            return done( { message: 'Incorrect client_id.' } );
+            return done( { message: 'Unknown Client.' } );
+        }
+        if( client.active !==  1) {
+            return done( { message: 'Client disabled.' } );
         }
         if( !client.validSecret( client.client_secret ) ) {
             return done( { message: 'Incorrect client_secret.' } );
@@ -293,12 +301,8 @@ exports.decision = server.decision();
 
 exports.token = [
     auth.passport.authenticate( ['basic', 'oauth2-client-password'], { session: false } ),
-    // function(req,res,next){console.log(req.body);next();},
     server.token(),
-    server.errorHandler(),
-    function(req, res, next) {
-        req.send( req.body );
-    }
+    server.errorHandler()
 ]
 
 function createToken(client, scope, done) {
@@ -343,3 +347,4 @@ function createAuthCode(client, user, redirect_uri, scope, done) {
         done( null, code );
     } );
 }
+

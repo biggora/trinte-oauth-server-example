@@ -12,15 +12,13 @@ var express = require( 'express' );
 
 module.exports = function routes(map) {
     map.namespace( "api", {
-        middleware: auth.bearerAuth()
+        middleware: [auth.bearerAuth()]
     }, function(api) {
-        api.resources( "users" );
+        api.get("/me.:format?", "api/users#index");
     } );
 
-    // app.post('/oauth/token', oauth2.token);
     map.root( "apps#index" );
-    // [auth.isLoggedIn( '/login' ),  ]
-    map.get( '/oauth/authorize', 'apps#dialog', oauth2.authorization, auth.isLoggedIn( '/login' ) );
+    map.get( '/oauth/authorize', 'apps#dialog', [auth.isLoggedIn( '/login' ), oauth2.authorization ] );
     map.post( '/oauth/authorize/decision', oauth2.decision[1], [auth.isLoggedIn( '/login' ), oauth2.decision[0]] );
     map.post( '/oauth/token', oauth2.token );
     map.all( '/logout', auth.logOut( "/" ) );
@@ -37,6 +35,4 @@ module.exports = function routes(map) {
         admin.resources( "users" );
         admin.resources( "clients" );
     } );
-
-
 };

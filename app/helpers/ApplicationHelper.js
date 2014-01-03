@@ -62,5 +62,37 @@ module.exports = {
             ipAddress = req.connection.remoteAddress;
         }
         return ipAddress;
+    },
+    validateFields: function(ins, query, options, callback) {
+        var filtered = {}, err;
+        ins = typeof ins === 'object' && ins.toJSON ? ins.toJSON() : ins;
+        query = typeof query === 'object' ? query : {};
+        if(typeof options === 'function')  {
+            callback = options;
+            options = {};
+        }
+        options = typeof options === 'object' ? options : {};
+
+        for( var prop in query ) {
+            if( Object.prototype.hasOwnProperty.call( ins, prop ) ) {
+                if( options.ignored ) {
+                    if( Object.prototype.toString.call( options.ignored ) === '[object Array]' ) {
+                        if( options.ignored.join( '#' ).toString().indexOf( prop ) === -1 ) {
+                            filtered[prop] = query[prop];
+                        }
+                    } else if( typeof options.ignored === 'string' ) {
+                        if( options.ignored.toString().indexOf( prop ) === -1 ) {
+                            filtered[prop] = query[prop];
+                        }
+                    } else {
+                        filtered[prop] = query[prop];
+                    }
+                } else {
+                    filtered[prop] = query[prop];
+                }
+            }
+        }
+
+        return callback && callback( err, filtered );
     }
 };

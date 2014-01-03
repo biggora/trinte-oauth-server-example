@@ -2,6 +2,7 @@
  * Created by Alex on 12/27/13.
  */
 var auth = require( 'trinte-auth' )
+    , config = require( '../configuration' )
     , passport = require( 'passport' )
     , LocalStrategy = require( 'passport-local' ).Strategy
     , BasicStrategy = require( 'passport-http' ).BasicStrategy
@@ -79,34 +80,27 @@ passport.use( new BearerStrategy(
     function(accessToken, done) {
         console.log( "BearerStrategy: ", accessToken )
         Token.findOne( {
-            access_token: accessToken,
-            expires: {
-                gte: new Date().getTime()
-            }
-        }).exec( function(err, token) {
+            access_token: accessToken
+        } ).exec( function(err, token) {
                 if( err ) {
                     return done( err );
                 }
-                if( !token ) {
-                    return done( null, false );
+                if( token === null ) {
+                    return done( { message: 'Token not found' } );
                 }
-                if( Math.round( (Date.now() - token.created) / 1000 ) > config.get( 'security:tokenLife' ) ) {
-                    Token.remove( {
-                        where: {
-                            access_token: accessToken
-                        }
-                    }, function(err) {
+                if( Math.round( (Date.now() - token.created) / 1000 ) > config.oauth.token_live ) {
+                    token.destroy( function(err) {
                         if( err ) return done( err );
                     } );
-                    return done( null, false, { message: 'Token expired' } );
+                    return done( { message: 'Token expired' } );
                 }
 
-                User.findById( token.userId, function(err, user) {
+                User.findById( token.user_id, function(err, user) {
                     if( err ) {
                         return done( err );
                     }
                     if( !user ) {
-                        return done( null, false, { message: 'Unknown user' } );
+                        return done( { message: 'Unknown user' } );
                     }
                     var info = { scope: '*' }
                     done( null, user, info );
@@ -125,7 +119,7 @@ passport.deserializeUser( function(id, done) {
     } );
 } );
 
-auth.localAuth = function(path) {
+auth.localAuth = function localAuth(path) {
     return passport.authenticate( 'local', {
         successReturnToOrRedirect: '/',
         failureRedirect: path || '/login',
@@ -134,7 +128,7 @@ auth.localAuth = function(path) {
     } );
 };
 
-auth.bearerAuth = function() {
+auth.bearerAuth = function bearerAuth() {
     return passport.authenticate( 'bearer', {
         session: false
     } );

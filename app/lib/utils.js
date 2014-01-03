@@ -1,6 +1,7 @@
 /**
  * Created by Alex on 12/27/13.
  */
+
 /**
  * Return a unique identifier with the given `len`.
  *
@@ -16,11 +17,10 @@ exports.uid = function(len) {
         , chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
         , charlen = chars.length;
 
-    for (var i = 0; i < len; ++i) {
-        buf.push(chars[getRandomInt(0, charlen - 1)]);
+    for( var i = 0; i < len; ++i ) {
+        buf.push( chars[getRandomInt( 0, charlen - 1 )] );
     }
-
-    return buf.join('');
+    return buf.join( '' );
 };
 
 /**
@@ -33,5 +33,5 @@ exports.uid = function(len) {
  */
 
 function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+    return Math.floor( Math.random() * (max - min + 1) ) + min;
 }

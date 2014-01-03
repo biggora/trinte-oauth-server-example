@@ -182,14 +182,13 @@ Resource.prototype.root = function(handler, middleware, options) {
         if( !options ) {
             options = {};
         }
-
         path = options.collection ? path.replace( /\/:.*_id/, '' ) : path;
 
         var args = [path];
         if( middleware ) {
             args = args.concat( this.middlewareStack.concat( middleware ) );
-        } else if (this.middleware.length) {
-            args = args.concat( this.middleware );
+        } else if (this.middlewareStack.length) {
+            args = args.concat( this.middlewareStack );
         }
         if( typeof controller === 'undefined' && typeof  action === 'undefined' ) {
             if( handler instanceof Array ) {
@@ -577,6 +576,7 @@ Resource.prototype.namespace = function(name, options, subroutes) {
         this.middlewareStack = this.middlewareStack.concat( options.middleware );
     }
     subroutes( this );
+
     if( options && options.middleware ) {
         options.middleware.forEach( [].pop.bind( this.middlewareStack ) );
     }
