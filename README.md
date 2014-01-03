@@ -7,7 +7,7 @@ A fully RESTful server implementation for TrinteJS MVC Framework
 #### Features
 
 * Multi database support: Redis, MongoDB, MySQL, SQLite, PostgreSQL, TingoDB
-* Access control via OAuth 2.0
+* OAuth 2.0 Access control
 * Cluster mode
 
 #### Requirements
@@ -21,4 +21,28 @@ A fully RESTful server implementation for TrinteJS MVC Framework
 * Clone source `git clone https://github.com/biggora/trinte-restful-server-example`
 * Go to project dir `cd trinte-restful-server-example`
 * Install deps `npm install`
-* Run server `node app.js`
+* Install Trinte framework `npm install -g trinte`
+* Run server `trinte s app.js`
+
+
+#### Local Access control routes
+
+##### Login
+
+   https://{server}/login
+
+##### Logout url
+
+   https://{server}//logout
+
+
+#### OAuth 2.0 Access control routes
+
+
+##### Authorize
+
+   https://{server}/oauth/authorize
+
+##### Access Token
+
+   https://{server}/oauth/access_token
