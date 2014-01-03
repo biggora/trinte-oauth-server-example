@@ -59,7 +59,6 @@ server.grant( oauth2orize.grant.code( function(client, redirect_uri, user, scope
     }
     Code.remove( {
         where: {
-            user_id: user.id,
             client_id: client.id,
             expires: {
                 lt: new Date().getTime()
@@ -91,12 +90,16 @@ server.grant( oauth2orize.grant.token( function(client, user, scope, done) {
 // code.
 
 server.exchange( oauth2orize.exchange.code( function(client, code, redirect_uri, done) {
-    console.log( 'Exchange code', client.client_id, code, redirect_uri )
+    console.log( 'Exchange code', client.id, code, redirect_uri )
     if( !client.validGrant( 'authorization_code' ) ) {
         return done( { message: 'Incorrect grant_type. Allowed types: ' + client.grant_types } );
     }
+    if( !redirect_uri ) {
+        return done( { message: 'redirect_uri parameter is missing.' } );
+    }
+
     Code.findOne( {
-        authorization_code: code,
+        authorization_code: code.toString(),
         expires: {
             gte: new Date().getTime()
         }
@@ -104,13 +107,18 @@ server.exchange( oauth2orize.exchange.code( function(client, code, redirect_uri,
             if( err ) {
                 return done( err );
             }
-            if( client.id !== authCode.client_id ) {
+            if( !authCode ) {
+                return done( { message: 'Authorization code not found.' } );
+            }
+            if( client.id !== authCode.id ) {
                 return done( { message: 'Incorrect client_id.' } );
             }
             if( !authCode.validRedirect( redirect_uri ) ) {
                 return done( { message: 'Incorrect redirect_uri.' } );
             }
-            createToken( authCode, authCode.scope, done );
+            authCode.destroy( function(err) {
+                createToken( authCode, authCode.scope, done );
+            } );
         } );
 } ) );
 
@@ -214,7 +222,6 @@ server.exchange( oauth2orize.exchange.refreshToken( function(client, refreshToke
                     if( err ) return done( err );
                     Token.remove( {
                         where: {
-                            user_id: user.id,
                             client_id: client.id,
                             expires: {
                                 lt: new Date().getTime()
@@ -295,9 +302,9 @@ exports.token = [
 ]
 
 function createToken(client, scope, done) {
-    var aToken = utils.uid( 48 ).toString( 'base64' );
+    var aToken = utils.uid( config.oauth.token_len ).toString( 'base64' );
     var rToken = utils.uid( 24 ).toString( 'base64' );
-    var expires = new Date().getTime() + config.oauth.token_live;
+    var expires = new Date().getTime() + (config.oauth.token_live * 1000);
     var nToken = new Token( {
         access_token: aToken,
         refresh_token: rToken,
@@ -319,8 +326,8 @@ function createToken(client, scope, done) {
 
 
 function createAuthCode(client, user, redirect_uri, scope, done) {
-    var code = utils.uid( 16 );
-    var expires = new Date().getTime() + config.oauth.code_live;
+    var code = utils.uid( config.oauth.code_len );
+    var expires = new Date().getTime() + (config.oauth.code_live * 1000);
     var nCode = new Code( {
         authorization_code: code,
         client_id: client.id,

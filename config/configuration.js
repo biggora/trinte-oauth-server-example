@@ -21,6 +21,8 @@ module.exports = {
         keepExtensions : true
     },
     oauth : {
+        token_len: 48,
+        code_len: 16,
         token_live : 3600,
         code_live : 1200,
         clear_interval: 60

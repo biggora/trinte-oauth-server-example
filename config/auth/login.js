@@ -39,7 +39,7 @@ passport.use( new BasicStrategy(
             if( err ) {
                 return done( err );
             }
-            if( !client ) {
+            if( client === null ) {
                 return done( null, false );
             }
             if( !client.validSecret( client_secret ) ) {
@@ -62,7 +62,7 @@ passport.use( new ClientPasswordStrategy(
             if( err ) {
                 return done( err );
             }
-            if( !client ) {
+            if( client === null ) {
                 return done( null, false );
             }
             if( !client.validSecret( client_secret ) ) {

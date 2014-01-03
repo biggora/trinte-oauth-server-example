@@ -11,20 +11,70 @@
                             </div>
                             <div class="modal-body">
                                 <div class="col-lg-9">
-                                    <p>Hi <%= user.fullName() %>!</p>
+                                    <div>
+                                        <strong><%- client.client_name %></strong> is requesting permission to do the following:
+                                        <div class="clearfix"><br></div>
+                                    </div>
+                                    <div class="list-group">
+                                        <a class="list-group-item">
+                                            <h4 class="list-group-item-heading">Access my basic information</h4>
 
-                                    <p><b><%= client.client_name %></b> is requesting access to your account.</p>
+                                            <p class="list-group-item-text">
+                                                Donec id elit non mi porta gravida
+                                                at eget metus. Maecenas sed diam eget risus varius blandit.
+                                            </p>
+                                        </a>
+                                        <a class="list-group-item">
+                                            <h4 class="list-group-item-heading">Access my profile information</h4>
 
-                                    <p>Do you approve?</p>
+                                            <p class="list-group-item-text">
+                                                Donec id elit non mi porta gravida
+                                                at eget metus. Maecenas sed diam eget risus varius blandit.
+                                            </p>
+                                        </a>
+                                        <a class="list-group-item">
+                                            <h4 class="list-group-item-heading">Send me email</h4>
+
+                                            <p class="list-group-item-text">
+                                                <%- client.client_name %> may email me directly.
+                                            </p>
+                                        </a>
+                                        <a class="list-group-item">
+                                            <h4 class="list-group-item-heading">Access my photos and videos</h4>
+
+                                            <p class="list-group-item-text">
+                                                Donec id elit non mi porta gravida
+                                                at eget metus. Maecenas sed diam eget risus varius blandit.
+                                            </p>
+                                        </a>
+                                        <a class="list-group-item">
+                                            <h4 class="list-group-item-heading">Access my contact information</h4>
+
+                                            <p class="list-group-item-text">
+                                                Donec id elit non mi porta gravida
+                                                at eget metus. Maecenas sed diam eget risus varius blandit.
+                                            </p>
+                                        </a>
+                                        <a class="list-group-item">
+                                            <h4 class="list-group-item-heading">Post to my Wall</h4>
+
+                                            <p class="list-group-item-text">
+                                                Donec id elit non mi porta gravida
+                                                at eget metus. Maecenas sed diam eget risus varius blandit.
+                                            </p>
+                                        </a>
+                                    </div>
                                     <input name="transaction_id" type="hidden" value="<%= transactionID %>">
                                 </div>
                                 <div class="col-lg-3">
-                                       <img class="img-thumbnail img-responsive" src="/img/app-default.png"/>
+                                    <img class="img-thumbnail img-responsive" src="/img/app-default.png"/>
                                 </div>
                                 <div class="clearfix"></div>
                             </div>
                             <div class="modal-footer">
-                                <div class="pull-left footer-info">Logged in as <strong><%= user.fullName() %></strong> (<a href="/logout">Not you?</a>)</div>
+                                <div class="pull-left footer-info">Logged in as
+                                    <strong><%= user.fullName() %></strong> (<a href="/logout">Not you?</a>)
+                                </div>
                                 <input class="btn btn-primary" type="submit" value="Allow" id="allow">
                                 <input class="btn btn-danger" type="submit" value="Don`t Allow" name="cancel" id="deny">
                             </div>
