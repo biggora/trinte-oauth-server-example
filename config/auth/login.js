@@ -92,7 +92,10 @@ passport.use( new BearerStrategy(
                     token.destroy( function(err) {
                         if( err ) return done( err );
                     } );
-                    return done( { message: 'Token expired' } );
+                    return done( {
+                        message: 'Token expired',
+                        code:'expired_token'
+                    } );
                 }
 
                 User.findById( token.user_id, function(err, user) {
@@ -100,7 +103,10 @@ passport.use( new BearerStrategy(
                         return done( err );
                     }
                     if( !user ) {
-                        return done( { message: 'Unknown user' } );
+                        return done( {
+                            message: 'Unknown user',
+                            code:'invalid_user'
+                        } );
                     }
                     var info = { scope: '*' };
                     console.log( "BearerStrategy completed!" )

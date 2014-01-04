@@ -34,12 +34,13 @@ module.exports = function routes(map) {
         auth.isLoggedIn( '/login' ),
         express.csrf(),
         oauth2.authorization,
-        oauth2.accessed()
+        oauth2.isPermited()
     ] );
     map.post( '/oauth/authorize/decision', oauth2.decision[1], [
         auth.isLoggedIn( '/login' ),
         express.csrf(),
-        oauth2.decision[0]
+        oauth2.decision[0],
+        oauth2.createPermition()
     ] );
 
     /* OAuth Access Token generation uri */

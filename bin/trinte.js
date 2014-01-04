@@ -233,6 +233,10 @@ function configureApp(trinte, callback) {
     // Before router to enable dynamic routing
     app.use(express['static'](root + '/public'));
     app.use(function(req, res, next) {
+        if (typeof req.csrfToken === "function" && req.session) {
+            req.session._csrf = req.csrfToken();
+            res.setHeader('X-CSRF', req.session._csrf);
+        }
         res.setHeader('X-Powered-By', 'TrinteJS MVC');
         next();
     });
@@ -241,16 +245,7 @@ function configureApp(trinte, callback) {
     app.set('views', root + '/app/views');
     app.engine('ejs', engine);
     app.set('view engine', 'ejs');
-
     app.use(flash());
-    app.use(function(req, res, next) {
-        if (typeof req.csrfToken === "function" && req.session) {
-            req.session._csrf = req.csrfToken();
-            next();
-        } else {
-            next();
-        }
-    });
     app.use(helper.init());
     middleware(app, express);
     app.use(app.router);

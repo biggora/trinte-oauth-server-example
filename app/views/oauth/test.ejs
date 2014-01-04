@@ -151,6 +151,22 @@
                     query.data['refresh_token'] = $( '#refresh_token' ).val();
                     query.data['grant_type'] = grant_type;
                     break;
+                case 'client_credentials':
+                    query.type = 'POST';
+                    query.data['client_id'] = $( '#client_id' ).val();
+                    query.data['client_secret'] = $( '#client_secret' ).val();
+                    query.data['username'] = $( '#username' ).val();
+                    query.data['password'] = $( '#password' ).val();
+                    query.data['grant_type'] = grant_type;
+                    break;
+                case 'password':
+                    query.type = 'POST';
+                    query.data['client_id'] = $( '#client_id' ).val();
+                    query.data['client_secret'] = $( '#client_secret' ).val();
+                    query.data['username'] = $( '#username' ).val();
+                    query.data['password'] = $( '#password' ).val();
+                    query.data['grant_type'] = grant_type;
+                    break;
             }
             return query;
         }

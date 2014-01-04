@@ -15,7 +15,7 @@ module.exports = function(app) {
             status: 404,
             message: "Page or Resource Not Found.",
             type: "AginteException",
-            code: 1
+            code: 'not_found'
         }
     };
 
@@ -27,9 +27,9 @@ module.exports = function(app) {
         res.status( err.status || 500 );
         if( parseInt( err.status ) === 500 ) {
             console.log( 'Internal Server Error: ' + err.message );
-            resErr.error.code = err.code || 2;
+            resErr.error.code = err.code || 'server_error';
         } else {
-            resErr.error.code = err.code || 3;
+            resErr.error.code = err.code || 'undefined_error';
         }
         resErr.error.status = err.status;
         resErr.error.message = err.message;
