@@ -1,14 +1,12 @@
-### RESTFul server example
+### OAuth 2.0 server server example
 
-A fully RESTful server implementation for TrinteJS MVC Framework
+A OAuth 2.0 server implementation
 
 #### status development
 
 #### Features
 
 * Multi database support: Redis, MongoDB, MySQL, SQLite, PostgreSQL, TingoDB
-* OAuth 2.0 Access control
-* Cluster mode
 
 #### Requirements
 
@@ -23,7 +21,6 @@ A fully RESTful server implementation for TrinteJS MVC Framework
 * Install Trinte framework `npm install -g trinte`
 * Install dependencies `npm install`
 * Run server `trinte s app.js`
-
 
 #### Server routes
 
