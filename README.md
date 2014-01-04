@@ -20,29 +20,26 @@ A fully RESTful server implementation for TrinteJS MVC Framework
 
 * Clone source `git clone https://github.com/biggora/trinte-restful-server-example`
 * Go to project dir `cd trinte-restful-server-example`
-* Install deps `npm install`
 * Install Trinte framework `npm install -g trinte`
+* Install dependencies `npm install`
 * Run server `trinte s app.js`
 
 
-#### Local Access control routes
+#### Server routes
 
-##### Login
+      # Access control routes
 
-   https://{server}/login
+      # Local
+      /login                    # login page uri
+      /logout                   # logout uri
 
-##### Logout url
+      # OAuth 2.0
+      /oauth/authorize          # `Request for Permission` Dialog uri
+      /oauth/access_token       # Access Token uri
 
-   https://{server}//logout
+      # Admin routes
 
+      /admin                    # Admin dashboard uri
+      /admin/users
+      /admin/clients
 
-#### OAuth 2.0 Access control routes
-
-
-##### Authorize
-
-   https://{server}/oauth/authorize
-
-##### Access Token
-
-   https://{server}/oauth/access_token
