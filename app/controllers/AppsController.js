@@ -94,10 +94,22 @@ module.exports = {
      * @param next
      */
     'dialog': function(req, res, next) {
+
+        var user = req.oauth2.user;
+        var client = req.oauth2.client;
+
         res.render( 'dialog', {
             transactionID: req.oauth2.transactionID,
-            user: req.oauth2.user,
-            client: req.oauth2.client,
+            user: user,
+            client: client,
+            scope: client.scope,
+            csrf: req.csrfToken(),
+            controllers: []
+        } );
+
+    },
+    'test': function(req, res, next) {
+        res.render( 'test', {
             controllers: []
         } );
     }

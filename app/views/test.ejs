@@ -1,0 +1,175 @@
+<% layout( './server_layout' ) -%>
+<div class="container">
+    <div class="row top-margin">
+        <div class="col-lg-offset-4 col-lg-4 col-md-offset-2 col-sm-8">
+            <form class="form-inline" id="testForm">
+                <div class="modal" style="display: block">
+                    <div class="modal-dialog">
+                        <div class="dialog-container">
+                            <div class="modal-header">
+                                <h4 class="modal-title pull-left"> Oauth Test tools</h4>
+
+                                <div class="col-lg-4 pull-right">
+                                    <input type="text" class="form-control input-sm" name="request_uri" id="request_uri" placeholder="/oauth/access_token" value="/oauth/access_token">
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="modal-body">
+
+                                <div class="form-group col-lg-6">
+                                    <label for="username">UserName:</label>
+                                    <input type="text" class="form-control" name="username" id="username" placeholder="Username" value="example@server.com">
+                                </div>
+                                <div class="form-group col-lg-6">
+                                    <label for="password">Password:</label>
+                                    <input type="password" class="form-control" name="password" id="password" placeholder="Password" value="horse2014">
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="form-group col-lg-6">
+                                    <label for="client_id">Client ID:</label>
+                                    <input type="text" class="form-control" name="client_id" id="client_id" placeholder="Client ID" value="1">
+                                </div>
+                                <div class="form-group col-lg-6">
+                                    <label for="client_secret">Client Secret:</label>
+                                    <input type="text" class="form-control" name="client_secret" id="client_secret" placeholder="Client Secret" value="FKgdh3EXgl8dlbt3er2eMg8g3mLVxQu8">
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="form-group col-lg-6">
+                                    <label for="code">Code:</label>
+                                    <input type="text" class="form-control" name="code" id="code" placeholder="Enter code">
+                                </div>
+                                <div class="form-group col-lg-6">
+                                    <label for="redirect_uri">Redirect Uri:</label>
+                                    <input type="text" class="form-control" name="redirect_uri" id="redirect_uri" placeholder="Redirect Uri" value="http://localhost:3000/oauth/test">
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="form-group col-lg-6">
+                                    <label for="grant_type">Grant type:</label>  <br/>
+                                    <select class="form-control" id="grant_type" name="grant_type">
+                                        <option value="bearer">Get Data</option>
+                                        <option value="authorization_code" selected>Authorization Code</option>
+                                        <option value="client_credentials">Client Credentials</option>
+                                        <option value="password">Password</option>
+                                        <option value="refresh_token">Refresh Token</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-lg-6">
+                                    <label for="refresh_token">Refresh Token:</label>
+                                    <input type="text" class="form-control" name="refresh_token" id="refresh_token" placeholder="Refresh Token" value="">
+                                </div>
+
+                                <div class="clearfix"><br/></div>
+                                <div class="form-group col-lg-12">
+                                    <label for="request_type">Result:</label>
+                                    <textarea rows="6" class="form-control" id="results"></textarea>
+                                </div>
+
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="modal-footer">
+                                <a class="btn btn-primary" href="#" id="allow">Start Request</a>
+                            </div>
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                </div>
+                <!-- /.modal -->
+            </form>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</div>
+<!--
+                                <div class="form-group col-lg-6">
+                                    <label for="scope">Scope:</label>
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" id="scope1" name="scope[]" value="option1"> 1
+                                    </label>
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" id="scope2" name="scope[]" value="option2"> 2
+                                    </label>
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" id="scope3" name="scope[]" value="option3"> 3
+                                    </label>
+                                </div>
+                                -->
+<script>
+    $( document ).ready( function() {
+
+        $( '#allow' ).click( function(e) {
+            e.preventDefault();
+            var ap = getData();
+            if( ap.data ) {
+                var result;
+                $.ajax( ap )
+                        .done( function(data) {
+                            try {
+                                result = JSON.stringify( data, null, 4 );
+                            } catch(err) {
+
+                            }
+                            if(data.refresh_token) {
+                                $( '#refresh_token' ).val( data.refresh_token );
+                            }
+                            $( '#results' ).val( result );
+                        } )
+                        .error( function(jqXHR, textStatus, errorThrown) {
+                            try {
+                                result = JSON.stringify( jqXHR.responseJSON, null, 4 );
+                            } catch(err) {
+                                result = errorThrown;
+                            }
+                            $( '#results' ).val( result );
+                        } );
+            }
+        } );
+
+        function getData() {
+            var query = {
+                headers: {'Cookie': document.cookie },
+                url: $( '#request_uri' ).val(),
+                type: 'GET',
+                dataType: 'json',
+                data: {
+                    redirect_uri: $( '#redirect_uri' ).val()
+                }
+            };
+            var grant_type = $( '#grant_type' ).val();
+            switch(grant_type) {
+                case 'authorization_code':
+                    query.type = 'POST';
+                    query.data['client_id'] = $( '#client_id' ).val();
+                    query.data['client_secret'] = $( '#client_secret' ).val();
+                    query.data['code'] = $( '#code' ).val();
+                    query.data['grant_type'] = grant_type;
+                    break;
+                case 'refresh_token':
+                    query.type = 'POST';
+                    query.data['client_id'] = $( '#client_id' ).val();
+                    query.data['client_secret'] = $( '#client_secret' ).val();
+                    query.data['refresh_token'] = $( '#refresh_token' ).val();
+                    query.data['grant_type'] = grant_type;
+                    break;
+            }
+            return query;
+        }
+
+        function getParameterByName(name) {
+            name = name.replace( /[\[]/, "\\\[" ).replace( /[\]]/, "\\\]" );
+            var regexS = "[\\?&]" + name + "=([^&#]*)";
+            var regex = new RegExp( regexS );
+            var results = regex.exec( window.location.search );
+            if( results == null )
+                return "";
+            else
+                return decodeURIComponent( results[1].replace( /\+/g, " " ) );
+        }
+
+        var code = getParameterByName( 'code' );
+        if( code ) {
+            $( '#code' ).val( code );
+        }
+
+    } );
+</script>

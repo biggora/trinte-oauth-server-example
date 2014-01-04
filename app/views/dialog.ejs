@@ -10,70 +10,107 @@
                                 <h4 class="modal-title">Request for Permission</h4>
                             </div>
                             <div class="modal-body">
-                                <div class="col-lg-9">
+                                <div class="col-lg-9 dialog-body-bg">
                                     <div>
                                         <strong><%- client.client_name %></strong> is requesting permission to do the following:
                                         <div class="clearfix"><br></div>
                                     </div>
                                     <div class="list-group">
+
                                         <a class="list-group-item">
+                                            <div class="pull-left icon-container img-thumbnail">
+                                                <i class="fa fa-user fa-4x"></i>
+                                            </div>
+
                                             <h4 class="list-group-item-heading">Access my basic information</h4>
 
                                             <p class="list-group-item-text">
-                                                Donec id elit non mi porta gravida
-                                                at eget metus. Maecenas sed diam eget risus varius blandit.
+                                                Includes name, profile picture, gender, user ID, list of friends.
                                             </p>
+                                            <input name="scope[]" type="hidden" value="basic_info">
+                                            <div class="clearfix"></div>
                                         </a>
+                                        <!--
                                         <a class="list-group-item">
+                                            <div class="pull-left icon-container img-thumbnail">
+                                                <i class="fa fa-user fa-4x"></i>
+                                            </div>
+
                                             <h4 class="list-group-item-heading">Access my profile information</h4>
 
                                             <p class="list-group-item-text">
                                                 Donec id elit non mi porta gravida
                                                 at eget metus. Maecenas sed diam eget risus varius blandit.
                                             </p>
+                                            <input name="scope[]" type="hidden" value="profile_info">
+                                            <div class="clearfix"></div>
                                         </a>
+                                        -->
                                         <a class="list-group-item">
+                                            <div class="pull-left icon-container img-thumbnail">
+                                                <i class="fa fa-envelope-o fa-4x"></i>
+                                            </div>
+
                                             <h4 class="list-group-item-heading">Send me email</h4>
 
                                             <p class="list-group-item-text">
                                                 <%- client.client_name %> may email me directly.
                                             </p>
+                                            <input name="scope[]" type="hidden" value="send_email">
+                                            <div class="clearfix"></div>
                                         </a>
                                         <a class="list-group-item">
+                                            <div class="pull-left icon-container img-thumbnail">
+                                                <i class="fa fa-picture-o fa-4x"></i>
+                                            </div>
+
                                             <h4 class="list-group-item-heading">Access my photos and videos</h4>
 
                                             <p class="list-group-item-text">
-                                                Donec id elit non mi porta gravida
-                                                at eget metus. Maecenas sed diam eget risus varius blandit.
+                                                Download my photos and videos.
                                             </p>
+                                            <input name="scope[]" type="hidden" value="medias">
+                                            <div class="clearfix"></div>
                                         </a>
                                         <a class="list-group-item">
+                                            <div class="pull-left icon-container img-thumbnail">
+                                                <i class="fa fa-book fa-4x"></i>
+                                            </div>
                                             <h4 class="list-group-item-heading">Access my contact information</h4>
 
                                             <p class="list-group-item-text">
-                                                Donec id elit non mi porta gravida
-                                                at eget metus. Maecenas sed diam eget risus varius blandit.
+                                                Current Address and Mobile Phone Number.
                                             </p>
+                                            <input name="scope[]" type="hidden" value="contact_info">
+                                            <div class="clearfix"></div>
                                         </a>
                                         <a class="list-group-item">
+                                            <div class="pull-left icon-container img-thumbnail">
+                                                <i class="fa fa-pencil-square-o fa-4x"></i>
+                                            </div>
                                             <h4 class="list-group-item-heading">Post to my Wall</h4>
 
                                             <p class="list-group-item-text">
-                                                Donec id elit non mi porta gravida
-                                                at eget metus. Maecenas sed diam eget risus varius blandit.
+                                                <%- client.client_name %> may post status messages, notes, photos and videos to my Wall.
                                             </p>
+                                            <input name="scope[]" type="hidden" value="post_wall">
+                                            <div class="clearfix"></div>
                                         </a>
                                     </div>
-                                    <input name="transaction_id" type="hidden" value="<%= transactionID %>">
+                                    <input name="transaction_id" type="hidden" value="<%- transactionID %>">
+                                    <input name="_csrf" type="hidden" value="<%- csrf %>">
                                 </div>
                                 <div class="col-lg-3">
-                                    <img class="img-thumbnail img-responsive" src="/img/app-default.png"/>
+                                    <div class="centered dialog-thumbnail">
+                                        <img class="img-thumbnail img-responsive" src="/img/app-default.png"/>
+                                        <strong><%- client.client_name %></strong>
+                                    </div>
                                 </div>
                                 <div class="clearfix"></div>
                             </div>
                             <div class="modal-footer">
                                 <div class="pull-left footer-info">Logged in as
-                                    <strong><%= user.fullName() %></strong> (<a href="/logout">Not you?</a>)
+                                    <strong><%- user.fullName() %></strong> (<a href="/logout">Not you?</a>)
                                 </div>
                                 <input class="btn btn-primary" type="submit" value="Allow" id="allow">
                                 <input class="btn btn-danger" type="submit" value="Don`t Allow" name="cancel" id="deny">

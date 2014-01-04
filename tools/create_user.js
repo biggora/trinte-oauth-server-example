@@ -31,7 +31,7 @@ var dClient = {
     active: 1,
     client_name: 'First App',
     client_secret: 'FKgdh3EXgl8dlbt3er2eMg8g3mLVxQu8',
-    redirect_uri: 'http://localhost:3000/',
+    redirect_uri: 'http://localhost:3000/oauth/test',
     user_id: 0
 };
 

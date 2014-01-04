@@ -142,7 +142,7 @@ server.exchange( oauth2orize.exchange.password( function(client, username, passw
             if( localClient === null ) {
                 return done( { message: 'Unknown Client.' } );
             }
-            if( localClient.active !==  1) {
+            if( localClient.active !== 1 ) {
                 return done( { message: 'Client disabled.' } );
             }
             if( !localClient.validSecret( client.client_secret ) ) {
@@ -189,7 +189,7 @@ server.exchange( oauth2orize.exchange.clientCredentials( function(client, scope,
         if( localClient === null ) {
             return done( { message: 'Unknown Client.' } );
         }
-        if( localClient.active !==  1) {
+        if( localClient.active !== 1 ) {
             return done( { message: 'Client disabled.' } );
         }
         if( !localClient.validSecret( client.client_secret ) ) {
@@ -265,7 +265,7 @@ exports.authorization = server.authorization( function(client_id, redirect_uri, 
         if( client === null ) {
             return done( { message: 'Unknown Client.' } );
         }
-        if( client.active !==  1) {
+        if( client.active !== 1 ) {
             return done( { message: 'Client disabled.' } );
         }
         if( !client.validSecret( client.client_secret ) ) {
@@ -302,8 +302,45 @@ exports.decision = server.decision();
 exports.token = [
     auth.passport.authenticate( ['basic', 'oauth2-client-password'], { session: false } ),
     server.token(),
-    server.errorHandler()
+    server.errorHandler(),
+    function(req, res, next) {
+        var result;
+        try {
+            result = JSON.stringify( req.body, null, 4 );
+        } catch(err) {
+            result = req.body;
+        }
+        res.send( result );
+    }
 ]
+
+//
+
+exports.accessed = function() {
+    var self = this;
+    return function(req, res, next) {
+        var user = req.oauth2.user;
+        var client = req.oauth2.client;
+
+        Permission.findOne( {
+            user_id: user.id,
+            client_id: client.id
+        } ).exec( function(err, permission) {
+                if( err ) {
+                    console.log( err );
+                }
+                if( !permission ) {
+                    next();
+                } else {
+                    req.body.transaction_id = req.oauth2.transactionID;
+                    self.decision[0]( req, res, function() {
+                        self.decision[1]( req, res, next );
+                    } );
+                }
+            } );
+    }
+}
+
 
 function createToken(client, scope, done) {
     var aToken = utils.uid( config.oauth.token_len ).toString( 'base64' );

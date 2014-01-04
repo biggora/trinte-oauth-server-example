@@ -134,6 +134,13 @@ auth.bearerAuth = function bearerAuth() {
     } );
 };
 
+auth.validateCSRF = function validateCSRF() {
+    return  function(req, res, next){
+        if (req.session._csrf !== req.csrfToken()) return next(403);
+        next();
+    };
+};
+
 auth.passport = passport;
 
 module.exports = auth;
