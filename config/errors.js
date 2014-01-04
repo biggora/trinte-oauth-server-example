@@ -13,7 +13,7 @@ module.exports = function(app) {
     var resErr = {
         error: {
             status: 404,
-            message: "Not Found.",
+            message: "Page or Resource Not Found.",
             type: "AginteException",
             code: 1
         }
@@ -27,9 +27,9 @@ module.exports = function(app) {
         res.status( err.status || 500 );
         if( parseInt( err.status ) === 500 ) {
             console.log( 'Internal Server Error: ' + err.message );
-            resErr.error.code = 2;
+            resErr.error.code = err.code || 2;
         } else {
-            resErr.error.code = 3;
+            resErr.error.code = err.code || 3;
         }
         resErr.error.status = err.status;
         resErr.error.message = err.message;

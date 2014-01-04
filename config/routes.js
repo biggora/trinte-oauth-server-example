@@ -53,6 +53,7 @@ module.exports = function routes(map) {
 
     /* Login page uri */
     map.get( '/login', "apps#login", express.csrf() );
+    map.get( '/admin/login', "admin/apps#login", express.csrf() );
     map.post( '/login', auth.localAuth() );
 
     /* Tools pages */
@@ -68,9 +69,17 @@ module.exports = function routes(map) {
          /admin/users    // Users section
          /admin/clients  // Clients section
      */
-    map.all( "/admin", "admin/apps#index", [auth.isLoggedIn( '/login' ), express.csrf()] );
+    map.all( "/admin", "admin/apps#index", [
+        auth.isLoggedIn( '/admin/login' ),
+        auth.isAdmin(),
+        express.csrf()
+    ] );
     map.namespace( "admin", {
-        middleware: [auth.isLoggedIn( '/login' ), express.csrf() ]
+        middleware: [
+            auth.isLoggedIn( '/admin/login' ),
+            auth.isAdmin(),
+            express.csrf()
+        ]
     }, function(admin) {
         admin.resources( "users" );
         admin.resources( "clients" );

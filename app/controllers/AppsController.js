@@ -10,106 +10,94 @@
  *  Created by create-controller script
  *  App based on TrinteJS MVC framework
  *  TrinteJS homepage http://www.trintejs.com
+ *
  **/
-var fs = require( 'fs' );
+
 
 module.exports = {
     /**
      * Default Application index - shows a list of the controllers.
      * Redirect here if you prefer another controller to be your index.
-     * @param req
-     * @param res
-     * @param next
+     *
+     * @param {Object} req
+     * @param {Object} res
+     * @param {Function} next
      */
     'index': function(req, res, next) {
-
-        /**
-         * If you want to redirect to another controller, uncomment
-         */
-
         var controllers = [];
-
-        fs.readdir( __dirname + '/', function(err, files) {
-
-            if( err )
-                throw err;
-
-            files.forEach( function(file) {
-                if( /\.js$/i.test( file ) ) {
-                    if( file !== "AppsController.js" ) {
-                        controllers.push( file.replace( 'Controller.js', '' ).toLowerCase() );
-                    }
-                }
-            } );
-
-            res.render( 'app', {
-                controllers: controllers
-            } );
-
+        res.render( 'app', {
+            controllers: controllers
         } );
     },
     /**
      * Default Application login page.
-     * @param req
-     * @param res
-     * @param next
+     *
+     * @param {Object} req
+     * @param {Object} res
+     * @param {Function} next
      */
     'login': function(req, res, next) {
-
-        res.render( 'login', {
+        res.render( 'oauth/login', {
+            title: 'Login',
             controllers: []
         } );
-
     },
     /**
      * Default Application registration action.
-     * @param req
-     * @param res
-     * @param next
+     *
+     * @param {Object} req
+     * @param {Object} res
+     * @param {Function} next
      */
     'registration': function(req, res, next) {
-
-        res.render( 'login', {
+        res.render( 'oauth/login', {
+            title: 'Registration',
             controllers: []
         } );
-
     },
     /**
-     * Default Application registration action.
-     * @param req
-     * @param res
-     * @param next
+     * Check email address action.
+     *
+     * @param {Object} req
+     * @param {Object} res
+     * @param {Function} next
      */
     'checkmail': function(req, res, next) {
-
-        res.render( 'login', {
+        res.render( 'api/empty', {
             controllers: []
         } );
-
     },
     /**
-     * Default Application dialog action.
-     * @param req
-     * @param res
-     * @param next
+     * Show dialog action.
+     *
+     * @param {Object} req
+     * @param {Object} res
+     * @param {Function} next
      */
     'dialog': function(req, res, next) {
-
         var user = req.oauth2.user;
         var client = req.oauth2.client;
 
-        res.render( 'dialog', {
+        res.render( 'oauth/dialog', {
+            title: 'Request for Permission',
             transactionID: req.oauth2.transactionID,
             user: user,
             client: client,
             scope: client.scope,
-            csrf: req.csrfToken(),
-            controllers: []
+            csrf: req.csrfToken()
         } );
 
     },
+    /**
+     * Show OAuth Token test action.
+     *
+     * @param {Object} req
+     * @param {Object} res
+     * @param {Function} next
+     */
     'test': function(req, res, next) {
-        res.render( 'test', {
+        res.render( 'oauth/test', {
+            title: 'OAuth Token Test',
             controllers: []
         } );
     }

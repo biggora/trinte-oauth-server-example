@@ -7,13 +7,16 @@
  **/
 
 module.exports = {
+    app: {
+      title : 'Aginte Test Server'
+    },
+    port : 3000,
     debug: false,
     language: "en",
-    port : 3000,
     session: {
         maxAge : 8640000,
         key : "trinte",
-        secret : "feb722690aeccfa92ca9ee6fdf06e55a",
+        secret : "Afeb722690aeccfa92ca9ee6fdf06e55aF",
         clear_interval: 60
     },
     parser : {

@@ -1,0 +1,56 @@
+<% layout( './layout' ) -%>
+<div class="container">
+    <div class="row top-margin">
+        <div class="col-lg-offset-4 col-lg-4 col-md-offset-3 col-sm-6">
+            <form id="signin" class="form form-horizontal" role="form" method="POST" action='/login'>
+                <div class="modal" style="display: block">
+                    <div class="modal-dialog">
+                        <div class="dialog-container">
+                            <div class="modal-header">
+                                <h4 class="modal-title"><i class="fa fa-unlock-alt"></i>&nbsp;&nbsp;<%- title %></h4>
+                            </div>
+                            <div class="modal-body">
+                                <br/>
+                                <div class="form-group col-lg-12">
+                                    <label for="sign_login" class="col-sm-3 control-label">E-Mail:</label>
+
+                                    <div class="col-sm-9">
+                                        <input name="sign_login" type="email" class="form-control" id="sign_login" placeholder="Enter e-mail address">
+                                    </div>
+                                </div>
+                                <div class="form-group col-lg-12">
+                                    <label for="sign_password" class="col-sm-3 control-label">Password:</label>
+
+                                    <div class="col-sm-9">
+                                        <input name='sign_password' type="password" class="form-control" id="sign_password" placeholder="Enter Password">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="checkbox col-lg-offset-3 col-md-offset-3 col-sm-offset-3 col-lg-8 col-md-8 col-sm-8">
+                                        <label>
+                                            <input style="margin-left: 0px" type="checkbox" name="keep_me" id="keep_me">&nbsp;&nbsp; Keep me logged in
+                                        </label>
+                                        <a href="#" class="pull-right">Forgot your password?</a>
+                                    </div>
+                                </div>
+                                <input type="hidden" name="_csrf" value="<%= session._csrf %>"/>
+
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="modal-footer">
+                                <a href="#" class="pull-left" style="margin-top: 6px">Sign Up</a>
+                                <button class="btn btn-primary" type="submit" id="allow">
+                                    <i class="fa fa-lock"></i>&nbsp;&nbsp; Sig In
+                                </button>
+                                <a class="btn btn-default" id="deny" href="/"><i class="fa fa-times"></i>&nbsp;&nbsp; Cancel</a>
+                            </div>
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                </div>
+                <!-- /.modal -->
+            </form>
+        </div>
+    </div>
+</div>

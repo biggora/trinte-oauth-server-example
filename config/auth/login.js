@@ -22,10 +22,10 @@ passport.use( new LocalStrategy( {
                 return done( err );
             }
             if( !user ) {
-                return done( null, false, { message: 'Incorrect username.' } );
+                return done( { message: 'Incorrect username.' } );
             }
             if( !user.validPassword( password ) ) {
-                return done( null, false, { message: 'Incorrect password.' } );
+                return done( { message: 'Incorrect password.' } );
             }
             return done( null, user );
         } );
@@ -78,7 +78,7 @@ passport.use( new ClientPasswordStrategy(
 /*  BearerStrategy */
 passport.use( new BearerStrategy(
     function(accessToken, done) {
-        console.log( "BearerStrategy: ", accessToken )
+        console.log( "BearerStrategy Start!" )
         Token.findOne( {
             access_token: accessToken
         } ).exec( function(err, token) {
@@ -102,7 +102,8 @@ passport.use( new BearerStrategy(
                     if( !user ) {
                         return done( { message: 'Unknown user' } );
                     }
-                    var info = { scope: '*' }
+                    var info = { scope: '*' };
+                    console.log( "BearerStrategy completed!" )
                     done( null, user, info );
                 } );
             } );
@@ -134,10 +135,26 @@ auth.bearerAuth = function bearerAuth() {
     } );
 };
 
-auth.validateCSRF = function validateCSRF() {
+auth.isAdmin = function isAdmin(path) {
     return  function(req, res, next){
-        if (req.session._csrf !== req.csrfToken()) return next(403);
-        next();
+        var user = req.user || {};
+        if(user && user.account_type) {
+            if(user.account_type === 'admin') {
+                next();
+            } else {
+                if(path) {
+                    res.redirect(path);
+                } else {
+                    res.render('errors/403');
+                }
+            }
+        } else {
+            if(path) {
+                res.redirect(path);
+            } else {
+                res.render('errors/403');
+            }
+        }
     };
 };
 

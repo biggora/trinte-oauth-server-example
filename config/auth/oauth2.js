@@ -90,7 +90,7 @@ server.grant( oauth2orize.grant.token( function(client, user, scope, done) {
 // code.
 
 server.exchange( oauth2orize.exchange.code( function(client, code, redirect_uri, done) {
-    console.log( 'Exchange code', client.id, code, redirect_uri )
+    console.log( 'Exchange code' )
     if( !client.validGrant( 'authorization_code' ) ) {
         return done( { message: 'Incorrect grant_type. Allowed types: ' + client.grant_types } );
     }
