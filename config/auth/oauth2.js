@@ -119,8 +119,7 @@ server.exchange( oauth2orize.exchange.code( function(client, code, redirect_uri,
                     code: 'invalid_code'
                 } );
             }
-
-            if( Math.round( (Date.now() - authCode.expires) ) < 0 ) {
+            if( Math.round( (authCode.expires - Date.now()) ) < 0 ) {
                 return done( {
                     message: 'Code expired',
                     code:'expired_code'
@@ -282,7 +281,7 @@ server.exchange( oauth2orize.exchange.refreshToken( function(client, refreshToke
                 } );
             }
 
-            if( Math.round( (Date.now() - token.expires_refresh) ) < 0 ) {
+            if( Math.round( (token.expires_refresh - Date.now()) ) < 0 ) {
                 token.destroy( function(err) {
                    if( err ) return done( err );
                 } );

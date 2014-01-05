@@ -18,7 +18,7 @@ var dUser = {
     active: 1,
     username: 'example@server.com',
     salt: salt,
-    password: Helper.createPasswordHash(cleanPass, salt),
+    password: Helper.createPasswordHash(cleanPass, salt.toString()),
     first_name: 'Alexey',
     last_name: 'Gordeyev',
     photo: '',

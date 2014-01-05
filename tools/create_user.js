@@ -10,17 +10,17 @@ var schema = new Schema(database.db.driver, database.db);
 var Client = require('../app/models/Client')(schema);
 var User = require('../app/models/User')(schema);
 var salt = Helper.uid(8);
-var cleanPass = 'blackHorse';
+var cleanPass = 'blueHorse';
 
 // require( '../app/helpers/ModelsHelper' );
 
 var dUser = {
     active: 1,
-    username: 'ivan@server.com',
+    username: 'petja@server.com',
     salt: salt,
-    password: Helper.createPasswordHash(cleanPass, salt),
-    first_name: 'Ivan',
-    last_name: 'Fedorov',
+    password: Helper.createPasswordHash(cleanPass, salt.toString()),
+    first_name: 'Petja',
+    last_name: 'Ivanov',
     photo: '',
     birthday: '1970-21-03',
     website: 'http://www.cenufiltrs.lv/',
