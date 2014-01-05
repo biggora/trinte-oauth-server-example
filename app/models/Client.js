@@ -17,7 +17,7 @@
  *  @param {Object} schema
  **/
 module.exports = function(schema) {
-    var Client = schema.define( 'client', {
+    var Client = schema.define( 'oauth_client', {
         active: { type: Number, 'default': 1, index: true },
         client_name: { type: String, unique: true },
         client_type: { type: String, 'default': 'confidential' },

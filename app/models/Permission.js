@@ -17,7 +17,7 @@
  *  @param {Object} schema
  **/
 module.exports = function(schema) {
-    var Permission = schema.define( 'permission', {
+    var Permission = schema.define( 'oauth_permission', {
         client_id: { type: String, index: true },
         user_id: { type: String, index: true },
         scope: { type: String, 'default': '*'},

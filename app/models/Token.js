@@ -17,12 +17,13 @@
  *  @param {Object} schema
  **/
 module.exports = function(schema) {
-    var Token = schema.define( 'token', {
+    var Token = schema.define( 'oauth_token', {
         access_token: { type: String, unique: true },
         refresh_token: { type: String, unique: true },
         client_id: { type: String, index: true },
         user_id: { type: String, index: true },
-        expires: { type: Number, index: true },
+        expires_access: { type: Number, index: true },
+        expires_refresh: { type: Number, index: true },
         scope: { type: String, 'default': '*' },
         created: { type: Date, 'default': Date.now }
     } );

@@ -17,7 +17,7 @@
  *  @param {Object} schema
  **/
 module.exports = function(schema) {
-    var Code = schema.define( 'code', {
+    var Code = schema.define( 'oauth_code', {
         authorization_code: { type: String, unique: true },
         client_id: { type: String, index: true },
         user_id: { type: String, index: true },

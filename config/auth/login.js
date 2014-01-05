@@ -35,7 +35,6 @@ passport.use( new LocalStrategy( {
 /*  BasicStrategy */
 passport.use( new BasicStrategy(
     function(client_id, client_secret, done) {
-        console.log( 'BasicStrategy Start!' );
         Client.findOne( { id: client_id }, function(err, client) {
             if( err ) {
                 return done( err );
@@ -46,7 +45,6 @@ passport.use( new BasicStrategy(
             if( !client.validSecret( client_secret ) ) {
                 return done( null, false );
             }
-            console.log( 'BasicStrategy completed!' );
             return done( null, client );
         } );
     }
@@ -55,7 +53,6 @@ passport.use( new BasicStrategy(
 /*  ClientPasswordStrategy */
 passport.use( new ClientPasswordStrategy(
     function(client_id, client_secret, done) {
-        console.log( 'ClientPasswordStrategy Start!' );
         Client.findOne( {
             active: 1,
             id: client_id
@@ -69,7 +66,6 @@ passport.use( new ClientPasswordStrategy(
             if( !client.validSecret( client_secret ) ) {
                 return done( null, false );
             }
-            console.log( 'ClientPasswordStrategy completed! ' );
             return done( null, client );
         } );
     }
@@ -78,7 +74,7 @@ passport.use( new ClientPasswordStrategy(
 /*  BearerStrategy */
 passport.use( new BearerStrategy(
     function(accessToken, done) {
-        console.log( "BearerStrategy Start!" )
+
         Token.findOne( {
             access_token: accessToken
         } ).exec( function(err, token) {
@@ -88,10 +84,7 @@ passport.use( new BearerStrategy(
                 if( token === null ) {
                     return done( { message: 'Token not found' } );
                 }
-                if( Math.round( (Date.now() - token.created) / 1000 ) > config.oauth.token_live ) {
-                    token.destroy( function(err) {
-                        if( err ) return done( err );
-                    } );
+                if( Math.round( (Date.now() - token.expires_access) ) < 0 ) {
                     return done( {
                         message: 'Token expired',
                         code:'expired_token'
@@ -109,7 +102,6 @@ passport.use( new BearerStrategy(
                         } );
                     }
                     var info = { scope: '*' };
-                    console.log( "BearerStrategy completed!" )
                     done( null, user, info );
                 } );
             } );

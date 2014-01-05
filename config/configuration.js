@@ -14,7 +14,7 @@ module.exports = {
     debug: false,
     language: "en",
     session: {
-        maxAge : 8640000,
+        maxAge : 86400 * 1000,
         key : "trinte",
         secret : "Afeb722690aeccfa92ca9ee6fdf06e55aF",
         clear_interval: 60
@@ -25,9 +25,10 @@ module.exports = {
     },
     oauth : {
         token_len: 48,
-        code_len: 16,
-        token_live : 3600,
+        code_len: 24,
+        token_live : 86400,
         code_live : 1200,
+        refresh_live: 864000,
         clear_interval: 60
     }
 };

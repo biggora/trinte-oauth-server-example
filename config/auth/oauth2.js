@@ -108,10 +108,7 @@ server.exchange( oauth2orize.exchange.code( function(client, code, redirect_uri,
     }
 
     Code.findOne( {
-        authorization_code: code.toString(),
-        expires: {
-            gte: new Date().getTime()
-        }
+        authorization_code: code.toString()
     } ).exec( function(err, authCode) {
             if( err ) {
                 return done( err );
@@ -123,7 +120,19 @@ server.exchange( oauth2orize.exchange.code( function(client, code, redirect_uri,
                 } );
             }
 
+            if( Math.round( (Date.now() - authCode.expires) ) < 0 ) {
+                return done( {
+                    message: 'Code expired',
+                    code:'expired_code'
+                } );
+            }
+
             if( client.id.toString() !== authCode.client_id.toString() ) {
+                authCode.destroy( function(err) {
+                    if( err ) {
+                        return done( err );
+                    }
+                } );
                 return done( {
                     message: 'Incorrect client_id.',
                     code: 'invalid_client_id'
@@ -136,6 +145,9 @@ server.exchange( oauth2orize.exchange.code( function(client, code, redirect_uri,
                 } );
             }
             authCode.destroy( function(err) {
+                if( err ) {
+                    return done( err );
+                }
                 createToken( authCode, authCode.scope, done );
             } );
         } );
@@ -270,6 +282,16 @@ server.exchange( oauth2orize.exchange.refreshToken( function(client, refreshToke
                 } );
             }
 
+            if( Math.round( (Date.now() - token.expires_refresh) ) < 0 ) {
+                token.destroy( function(err) {
+                   if( err ) return done( err );
+                } );
+                return done( {
+                    message: 'Token expired',
+                    code:'expired_token'
+                } );
+            }
+
             User.findById( token.user_id, function(err, user) {
                 if( err ) {
                     return done( err );
@@ -286,7 +308,7 @@ server.exchange( oauth2orize.exchange.refreshToken( function(client, refreshToke
                     Token.remove( {
                         where: {
                             client_id: client.id,
-                            expires: {
+                            expires_refresh: {
                                 lt: new Date().getTime()
                             }
                         } }, function(err) {
@@ -426,14 +448,16 @@ exports.createPermition = function createPermition() {
 function createToken(client, scope, done) {
     var aToken = utils.uid( config.oauth.token_len ).toString( 'base64' );
     var rToken = utils.uid( 24 ).toString( 'base64' );
-    var expires = new Date().getTime() + (config.oauth.token_live * 1000);
+    var aExpires = new Date().getTime() + (config.oauth.token_live * 1000);
+    var rExpires = new Date().getTime() + (config.oauth.refresh_live * 1000);
     var nToken = new Token( {
         access_token: aToken,
         refresh_token: rToken,
         client_id: client.id,
         user_id: client.user_id,
         scope: scope || '*',
-        expires: expires
+        expires_access: aExpires,
+        expires_refresh: rExpires
     } );
     nToken.save( function(err) {
         if( err ) {
